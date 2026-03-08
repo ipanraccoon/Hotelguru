@@ -7,8 +7,8 @@ from typing import List
 UserRole = Table(
     "userroles",
     Base.metadata,
-    Column("user_id", ForeignKey("user.id")),
-    Column("role_id", ForeignKey("role.id"))
+    Column("user_id", ForeignKey("users.id")),
+    Column("role_id", ForeignKey("roles.id"))
 )
 
 class User(db.Model):
@@ -20,5 +20,4 @@ class User(db.Model):
     Password: Mapped[str] = mapped_column(String(30))
     Phone: Mapped[str] = mapped_column(String(30))
 
-    roles = Mapped[List["Role"]] = relationship(secondary=UserRole, back_populates = "users")
-
+    roles: Mapped[List["Role"]] = relationship(secondary=UserRole, back_populates = "users")

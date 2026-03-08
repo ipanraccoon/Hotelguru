@@ -10,4 +10,4 @@ db.init_app(app)
 
 migrate = Migrate(app, db)
 
-import Hotelguru.views
+from Hotelguru import models, views
