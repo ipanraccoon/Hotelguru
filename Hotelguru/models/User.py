@@ -3,6 +3,8 @@ from sqlalchemy import ForeignKey, Column, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import String, Boolean
 from typing import List
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 UserRole = Table(
     "userroles",
@@ -21,3 +23,9 @@ class User(db.Model):
     Phone: Mapped[str] = mapped_column(String(30))
 
     roles: Mapped[List["Role"]] = relationship(secondary=UserRole, back_populates = "users")
+
+    def set_password(self, password):
+        self.Password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.Password, password)
