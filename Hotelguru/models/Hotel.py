@@ -13,3 +13,4 @@ class Hotel(db.Model):
     Address: Mapped[str] = mapped_column(String(30))
 
     rooms: Mapped[List["Room"]] = relationship(backref="hotel")
+    services: Mapped[List["Service"]] = relationship(back_populates="hotel")
