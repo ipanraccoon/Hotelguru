@@ -16,4 +16,5 @@ class Reservation(db.Model):
     created_at: Mapped[DateTime] = mapped_column(DateTime)
     aproved_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
+    user: Mapped["User"] = relationship(back_populates="reservations")
     rooms: Mapped[List["ReservationRoom"]] = relationship(back_populates="reservation")
