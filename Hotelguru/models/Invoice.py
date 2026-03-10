@@ -5,13 +5,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import String
 from typing import List
 
-class ReservationRoom(db.Model):
-    __tablename__ = "reservationrooms"
+class Invoice(db.Model):
+    __tablename__="invoices"
 
     id: Mapped[int] = mapped_column(primary_key = True)
-    reservation_id: Mapped[int] = mapped_column(ForeignKey("reservations.id"))
-    room_id: Mapped[int] = mapped_column(ForeignKey("rooms.id"))
-    price_per_night: Mapped[int] = mapped_column()
+    total_amount: Mapped[int] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(DateTime)
 
-    reservation: Mapped["Reservation"] = relationship(back_populates="rooms")
-    room: Mapped["Room"] = relationship()
+    reservation_id: Mapped[int] = mapped_column(ForeignKey("reservations.id"))
+    issued_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
+
+    items: Mapped[List["InvoiceItem"]] = relationship(back_populates="invoice")
