@@ -2,6 +2,7 @@ from Hotelguru.extensions import db
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import String, Boolean
+from typing import List
 
 
 class Room(db.Model):
@@ -13,3 +14,5 @@ class Room(db.Model):
     Kitchen: Mapped[bool] = mapped_column()
     
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id"))
+
+    reservations: Mapped[List["ReservationRoom"]] = relationship()

@@ -34,12 +34,34 @@
     <Compile Include="Hotelguru\extensions.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Hotelguru\models\Hotel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\Reservation.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\ReservationRoom.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\Role.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\Room.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\User.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="runserver.py" />
     <Compile Include="Hotelguru\__init__.py" />
     <Compile Include="Hotelguru\views.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Hotelguru\" />
+    <Folder Include="Hotelguru\models\" />
     <Folder Include="Hotelguru\static\" />
     <Folder Include="Hotelguru\static\content\" />
     <Folder Include="Hotelguru\static\fonts\" />

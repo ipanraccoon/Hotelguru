@@ -24,6 +24,8 @@ class User(db.Model):
 
     roles: Mapped[List["Role"]] = relationship(secondary=UserRole, back_populates = "users")
 
+    reservations: Mapped[List["Reservation"]] = relationship()
+
     def set_password(self, password):
         self.Password = generate_password_hash(password)
 
