@@ -73,8 +73,13 @@
     <Folder Include="Hotelguru\static\fonts\" />
     <Folder Include="Hotelguru\static\scripts\" />
     <Folder Include="Hotelguru\templates\" />
+    <Folder Include="Hotelguru\templates\images\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Hotelguru\templates\Hotelgurumain.html" />
+    <Content Include="Hotelguru\templates\images\hotel1.jpg" />
+    <Content Include="Hotelguru\templates\images\hotel2.jpg" />
+    <Content Include="Hotelguru\templates\images\hotel3.jpg" />
     <Content Include="requirements.txt" />
     <Content Include="Hotelguru\static\content\bootstrap.css" />
     <Content Include="Hotelguru\static\content\bootstrap.min.css" />
