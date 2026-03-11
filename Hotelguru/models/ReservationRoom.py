@@ -14,4 +14,4 @@ class ReservationRoom(db.Model):
     price_per_night: Mapped[int] = mapped_column()
 
     reservation: Mapped["Reservation"] = relationship(back_populates="rooms")
-    room: Mapped["Room"] = relationship()
+    room: Mapped["Room"] = relationship(back_populates="reservations")

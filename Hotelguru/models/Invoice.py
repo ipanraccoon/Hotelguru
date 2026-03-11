@@ -15,4 +15,5 @@ class Invoice(db.Model):
     reservation_id: Mapped[int] = mapped_column(ForeignKey("reservations.id"))
     issued_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
+    reservation: Mapped["Reservation"] = relationship(back_populates="invoice")
     items: Mapped[List["InvoiceItem"]] = relationship(back_populates="invoice")

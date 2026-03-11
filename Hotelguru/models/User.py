@@ -17,17 +17,17 @@ class User(db.Model):
     __tablename__ = "users"
     
     id: Mapped[int] = mapped_column(primary_key = True)
-    Name: Mapped[str] = mapped_column(String(30))
-    Email: Mapped[str] = mapped_column(String(30))
-    Password: Mapped[str] = mapped_column(String(30))
-    Phone: Mapped[str] = mapped_column(String(30))
+    name: Mapped[str] = mapped_column(String(30))
+    email: Mapped[str] = mapped_column(String(30))
+    password: Mapped[str] = mapped_column(String(30))
+    phone: Mapped[str] = mapped_column(String(30))
 
     roles: Mapped[List["Role"]] = relationship(secondary=UserRole, back_populates = "users")
 
-    reservations: Mapped[List["Reservation"]] = relationship()
+    reservations: Mapped[List["Reservation"]] = relationship(back_populates="user")
 
     def set_password(self, password):
-        self.Password = generate_password_hash(password)
+        self.password = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.Password, password)
+        return check_password_hash(self.password, password)

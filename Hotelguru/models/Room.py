@@ -9,10 +9,11 @@ class Room(db.Model):
     __tablename__="rooms"
 
     id: Mapped[int] = mapped_column(primary_key = True)
-    Number: Mapped[int] = mapped_column()
-    Beds: Mapped[int] = mapped_column()
-    Kitchen: Mapped[bool] = mapped_column()
+    number: Mapped[int] = mapped_column()
+    beds: Mapped[int] = mapped_column()
+    kitchen: Mapped[bool] = mapped_column()
     
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id"))
 
-    reservations: Mapped[List["ReservationRoom"]] = relationship()
+    hotel: Mapped["Hotel"] = relationship(back_populates="rooms")
+    reservations: Mapped[List["ReservationRoom"]] = relationship(back_populates="room")
