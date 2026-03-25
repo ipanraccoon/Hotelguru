@@ -1,10 +1,10 @@
-from flask import Flask
+from apiflask import APIFlask
 from Hotelguru.extensions import db
 from flask_migrate import Migrate
 from Hotelguru.config import Config
 
 def create_app(config_class=Config):
-    app = Flask(__name__)
+    app = APIFlask(__name__, json_errors=True, docs_path="/swagger", title="Hotelguru")
     app.config.from_object(config_class)
     
     db.init_app(app)

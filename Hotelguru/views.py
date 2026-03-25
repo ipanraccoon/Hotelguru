@@ -4,9 +4,9 @@ Routes and views for the flask application.
 
 from datetime import datetime
 from flask import render_template
-from flask import Blueprint
+from apiflask import APIBlueprint
 
-bp = Blueprint('main', __name__)
+bp = APIBlueprint('main', __name__)
 
 
 
@@ -15,7 +15,7 @@ bp = Blueprint('main', __name__)
 def home():
     """Renders the home page."""
     return render_template(
-        'index.html',
+        'Hotelgurumain.html',
         title='Home Page',
         year=datetime.now().year,
     )
