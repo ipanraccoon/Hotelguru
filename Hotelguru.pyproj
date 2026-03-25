@@ -17,6 +17,7 @@
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
     <Name>Hotelguru</Name>
     <RootNamespace>Hotelguru</RootNamespace>
+    <InterpreterId>MSBuild|myenv|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,19 +28,60 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Hotelguru\config.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\extensions.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\Hotel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\Invoice.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\InvoiceItem.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\Reservation.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\ReservationRoom.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\Role.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\Room.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\Service.py" />
+    <Compile Include="Hotelguru\models\User.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="runserver.py" />
     <Compile Include="Hotelguru\__init__.py" />
     <Compile Include="Hotelguru\views.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Hotelguru\" />
+    <Folder Include="Hotelguru\models\" />
+    <Folder Include="Hotelguru\blueprints\" />
     <Folder Include="Hotelguru\static\" />
     <Folder Include="Hotelguru\static\content\" />
     <Folder Include="Hotelguru\static\fonts\" />
     <Folder Include="Hotelguru\static\scripts\" />
     <Folder Include="Hotelguru\templates\" />
+    <Folder Include="Hotelguru\static\images\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Hotelguru\templates\Hotelgurumain.html" />
+    <Content Include="Hotelguru\static\images\hotel1.jpg" />
+    <Content Include="Hotelguru\static\images\hotel2.jpg" />
+    <Content Include="Hotelguru\static\images\hotel3.jpg" />
     <Content Include="requirements.txt" />
     <Content Include="Hotelguru\static\content\bootstrap.css" />
     <Content Include="Hotelguru\static\content\bootstrap.min.css" />
@@ -67,6 +109,17 @@
     <Content Include="Hotelguru\templates\contact.html" />
     <Content Include="Hotelguru\templates\index.html" />
     <Content Include="Hotelguru\templates\layout.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="myenv\">
+      <Id>myenv</Id>
+      <Version>3.9</Version>
+      <Description>myenv (Python 3.9 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 

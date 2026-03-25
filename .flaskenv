@@ -1,0 +1,2 @@
+FLASK_APP=Hotelguru
+FLASK_ENV=development
