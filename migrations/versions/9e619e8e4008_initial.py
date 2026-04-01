@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: 60fbccecec21
+Revision ID: 9e619e8e4008
 Revises: 
-Create Date: 2026-03-25 23:01:14.669043
+Create Date: 2026-04-01 21:34:17.937661
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '60fbccecec21'
+revision = '9e619e8e4008'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,9 +23,15 @@ def upgrade():
     sa.Column('name', sa.String(length=30), nullable=False),
     sa.Column('city', sa.String(length=30), nullable=False),
     sa.Column('address', sa.String(length=30), nullable=False),
+    sa.Column('rating', sa.Double(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('roles',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=30), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('roomstatuses',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=30), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -55,8 +61,11 @@ def upgrade():
     sa.Column('number', sa.Integer(), nullable=False),
     sa.Column('beds', sa.Integer(), nullable=False),
     sa.Column('kitchen', sa.Boolean(), nullable=False),
+    sa.Column('price', sa.Integer(), nullable=True),
     sa.Column('hotel_id', sa.Integer(), nullable=False),
+    sa.Column('status_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['hotel_id'], ['hotels.id'], ),
+    sa.ForeignKeyConstraint(['status_id'], ['roomstatuses.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('services',
@@ -113,6 +122,7 @@ def downgrade():
     op.drop_table('rooms')
     op.drop_table('reservations')
     op.drop_table('users')
+    op.drop_table('roomstatuses')
     op.drop_table('roles')
     op.drop_table('hotels')
     # ### end Alembic commands ###
