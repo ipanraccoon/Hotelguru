@@ -19,12 +19,12 @@ class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key = True)
     name: Mapped[str] = mapped_column(String(30))
     email: Mapped[str] = mapped_column(String(30))
-    password: Mapped[str] = mapped_column(String(30))
+    password: Mapped[str] = mapped_column(String(255))
     phone: Mapped[str] = mapped_column(String(30))
 
     roles: Mapped[List["Role"]] = relationship(secondary=UserRole, back_populates = "users")
 
-    reservations: Mapped[List["Reservation"]] = relationship(back_populates="user")
+    reservations: Mapped[List["Reservation"]] = relationship(foreign_keys="Reservation.user_id", back_populates="user")
 
     def set_password(self, password):
         self.password = generate_password_hash(password)

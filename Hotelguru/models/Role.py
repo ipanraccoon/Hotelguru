@@ -11,4 +11,4 @@ class Role(db.Model):
     id: Mapped[int] = mapped_column(primary_key = True)
     name: Mapped[str] = mapped_column(String(30))
 
-    users: Mapped[List["User"]] = relationship(back_populates="roles")
+    users: Mapped[List["User"]] = relationship(secondary="userroles", back_populates="roles")
