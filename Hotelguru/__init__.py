@@ -13,6 +13,10 @@ def create_app(config_class=Config):
     
     from Hotelguru.views import bp
     app.register_blueprint(bp)
+    from Hotelguru.blueprints import apibp
+    app.register_blueprint(apibp, url_prefix="/api")
+
+
     return app
 
 from Hotelguru import models, views
