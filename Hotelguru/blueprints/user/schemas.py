@@ -23,3 +23,8 @@ class RegisterSchema(Schema):
     email = String(required=True, validate=Email())
     password = String(required=True, validate=Length(min=6))
     phone = String(required=True, validate=Length(max=30))
+
+class UserUpdateSchema(Schema):
+    name = String(validate=Length(max=30))
+    email = String(validate=Email())
+    phone = String(validate=Length(max=30))
