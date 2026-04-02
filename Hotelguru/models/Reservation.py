@@ -13,8 +13,15 @@ class Reservation(db.Model):
     reserved_start_date: Mapped[datetime] = mapped_column(DateTime)
     reserved_end_date: Mapped[datetime] = mapped_column(DateTime)
     status: Mapped[str] = mapped_column(String(30))
-    created_at: Mapped[DateTime] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(DateTime)
     approved_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
 
-    user: Mapped["User"] = relationship(back_populates="reservations")
+    user: Mapped["User"] = relationship(
+    foreign_keys=[user_id],
+    back_populates="reservations"
+    )
+
+    approver: Mapped["User"] = relationship(
+    foreign_keys=[approved_by]
+    )
     rooms: Mapped[List["ReservationRoom"]] = relationship(back_populates="reservation")
