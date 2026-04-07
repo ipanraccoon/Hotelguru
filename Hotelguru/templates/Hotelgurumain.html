@@ -3,8 +3,12 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <link href="{{ url_for('static', filename='content/bootstrap.min.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='content/bootstrap.min.css') }}" rel="stylesheet" />
     <script src="{{ url_for('static', filename='scripts/bootstrap.min.js') }}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <title>Hotelguru</title>
 </head>
 <body>
@@ -129,10 +133,25 @@
                                 <a class="nav-link" href="javascript:void(0)">Link</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="javascript:void(0)">Link</a>
+                                <div data-coreui-start-date="2022/08/03"
+                                     data-coreui-end-date="2022/08/17"
+                                     data-coreui-locale="en-US"
+                                     data-coreui-toggle="date-range-picker">
+                                </div>
                             </li>
                         </ul>
                         <form class="d-flex">
+                            <input type="text" id="daterange" class="form-control me-2" placeholder="Dátum kiválasztás">
+                            <script>
+                                $(function () {
+                                    $('#daterange').daterangepicker({
+                                        opens: 'center',
+                                        locale: {
+                                            format: 'YYYY-MM-DD'
+                                        }
+                                    });
+                                });
+                            </script>
                             <input class="form-control me-2" type="text" placeholder="Search">
                             <button class="btn btn-danger" type="button">Search</button>
                         </form>
