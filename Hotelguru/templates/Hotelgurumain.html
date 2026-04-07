@@ -28,29 +28,31 @@
                             </div>
 
                             <!-- Modal body -->
-                            <div class="modal-body">
-                                <div>
-                                    <label for="email">Email:</label>
-                                    <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                            <form method="post">
+                                <div class="modal-body">
+                                    <div>
+                                        <label for="email">Email:</label>
+                                        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                                    </div>
+                                    <div>
+                                        <label for="pwd">Jelszó:</label>
+                                        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" name="remember">Emlékezz rám
+                                        </label>
+                                    </div>
+                                        <a href="#" class="text-danger">Regisztráció</a>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-danger col-12">Bejelentkezés</button>
+                                        <button type="button" class="btn btn-danger col-12" data-bs-dismiss="modal">Mégse</button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label for="pwd">Jelszó:</label>
-                                    <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
-                                </div>
-                                <div class="form-check">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="remember">Emlékezz rám:
-                                    </label>
-                                </div>
-                                <button type="submit" class="btn btn-danger">Bejelentkez</button>
-                                </form>
-                            </div>
-                            </div>
+                        </form>
 
-                            <!-- Modal footer -->
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Mégse</button>
-                            </div>
+                            
+                            
 
                         </div>
                     </div>
