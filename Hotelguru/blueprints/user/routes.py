@@ -1,9 +1,7 @@
-from flask import jsonify
 from Hotelguru.blueprints.user import bp
 from Hotelguru.blueprints.user.schemas import UserSchema, RoleSchema, LoginSchema, RegisterSchema, UserUpdateSchema
 from Hotelguru.blueprints.user.service import UserService
 from apiflask import HTTPError
-from apiflask.fields import String, Email, Nested, Integer
 
 @bp.route('/')
 def index():
@@ -54,7 +52,7 @@ def get_user(userid):
     success, response = UserService.get_user(userid)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=404)
+    raise HTTPError(message=response, status_code=400)
 
 @bp.put('/<int:userid>')
 @bp.doc(tags=["user"])
@@ -64,4 +62,4 @@ def update_user(userid, json_data):
     success, response = UserService.update_user(userid, json_data)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=404)
+    raise HTTPError(message=response, status_code=400)
