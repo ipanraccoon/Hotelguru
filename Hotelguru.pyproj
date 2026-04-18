@@ -28,7 +28,25 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Hotelguru\blueprints\hotel\routes.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\hotel\schemas.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Hotelguru\blueprints\hotel\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\room\routes.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\room\schemas.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\room\service.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\room\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Hotelguru\config.py">
