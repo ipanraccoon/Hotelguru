@@ -3,7 +3,7 @@ from Hotelguru.blueprints.room.schemas import RoomRequestSchema, RoomResponseSch
 from Hotelguru.models.RoomStatus import RoomStatus
 from Hotelguru.models.Hotel import Hotel
 from Hotelguru.models.Room import Room
-from sqlalchemy import select, and_
+from sqlalchemy import Select, select, and_
 
 class RoomService:
 
@@ -17,3 +17,8 @@ class RoomService:
         except Exception as ex:
             return False, "room_add() error"
         return True, RoomResponseSchema().dump(room)
+
+    @staticmethod
+    def room_list_all():
+        rooms = db.session.execute(select(Room)).scalars()
+        return True, RoomResponseSchema().dump(rooms, many=True)
