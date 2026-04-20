@@ -17,11 +17,11 @@ def check_in(reservationid):
         return response, 200
     raise HTTPError(message=response, status_code=400)
 
-# @bp.get('/check_out/<int:reservationid>')
-# @bp.doc(tags=["reception"])
-# @bp.output(InvoiceSchema)
-# def check_out(reservationid):
-#     success, response = ReceptionService.check_out(reservationid)
-#     if success:
-#         return response, 200
-#     raise HTTPError(message=response, status_code=400)
+@bp.put('/check_out/<int:reservationid>')
+@bp.doc(tags=["reception"])
+@bp.output(InvoiceSchema)
+def check_out(reservationid):
+    success, response = ReceptionService.check_out(reservationid)
+    if success:
+        return response, 200
+    raise HTTPError(message=response, status_code=400)
