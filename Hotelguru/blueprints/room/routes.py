@@ -1,3 +1,4 @@
+import json
 from sre_constants import SUCCESS
 from urllib import response
 from Hotelguru.blueprints.room import bp
@@ -18,3 +19,21 @@ def room_list_all():
         return response, 200
     raise HTTPError(message=response, status_code=400)
 
+
+
+
+@bp.put('/update/<int:rid>')
+@bp.input(RoomRequestSchema, location="json")
+@bp.output(RoomResponseSchema)
+def room_update(rid, json_data):
+    SUCCESS, response = RoomService.room_update(rid, json_data)
+    if SUCCESS:
+        return response, 200
+    raise HTTPError(message=response, status_code=400)
+
+@bp.put('/delete/<int:rid>')
+def room_delete(rid):
+    SUCCESS, response = RoomService.room_delete(rid)
+    if SUCCESS:
+        return response, 200
+    raise HTTPError(message=response, status_code=400)
