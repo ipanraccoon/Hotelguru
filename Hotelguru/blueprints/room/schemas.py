@@ -32,3 +32,4 @@ class RoomListSchema(Schema):
     kitchen = fields.Boolean()
     price = fields.Integer()
     status = fields.Nested(RoomStatusSchema)
+    hotel = fields.Nested(HotelResponseSchema)

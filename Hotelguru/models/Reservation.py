@@ -25,3 +25,4 @@ class Reservation(db.Model):
     foreign_keys=[approved_by]
     )
     rooms: Mapped[List["ReservationRoom"]] = relationship(back_populates="reservation")
+    invoice: Mapped["Invoice"] = relationship(back_populates="reservation")
