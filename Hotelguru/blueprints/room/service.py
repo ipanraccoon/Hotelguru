@@ -1,3 +1,4 @@
+from numbers import Number
 from Hotelguru.extensions import db
 from Hotelguru.blueprints.room.schemas import RoomRequestSchema, RoomResponseSchema, RoomStatusSchema, RoomListSchema
 from Hotelguru.models.RoomStatus import RoomStatus
@@ -10,25 +11,43 @@ class RoomService:
     @staticmethod
     def room_add(request):
         try:
-            room = Room(**request)
-            db.session.add(room)
-            db.session.commit()
+           hotel = db.session.get(Hotel, request["hotel_id"])
+           status = db.session.get(RoomStatus, request["roomstatus_id"])
+
+           if not hotel:
+               return False, "Invalid hotelID"
+           if not status:
+               return False, "Invalid statusID"
+
+           room = Room()
+           room.number = request["number"]
+           room.beds=int(request["beds"])
+           room.kitchen=request["kitchen"]
+           room.price=int(request["price"])
+           room.hotel_id=request["hotel_id"]
+           room.status_id=request["status_id"]
+            
+                
+           db.session.add(room)
+           db.session.commit()
+
+           return True, RoomResponseSchema().dump(room)
 
         except Exception as ex:
+            db.session.rollback()
             return False, "room_add() error"
-        return True, RoomResponseSchema().dump(room)
 
     @staticmethod
     def room_list_all():
-        rooms = db.session.execute(select(Room)).scalars()
+        rooms = db.session.execute(select(Room)).scalars().all()
         return True, RoomResponseSchema().dump(rooms, many=True)
 
     @staticmethod
     def room_list_hotel(hid):
-       if hid == None:
-           rooms = db.session.execute(select(Room)).scalars()
+       if hid is None:
+           rooms = db.session.execute(select(Room)).scalars().all()
        else:
-           rooms = db.session.execute(select(Room).filter(Room.hotel_id == hid)).scalars()
+           rooms = db.session.execute(select(Room).filter(Room.hotel_id == hid)).scalars().all()
        return True, RoomListSchema().dump(rooms, many = True)
 
 
@@ -44,9 +63,10 @@ class RoomService:
                 room.price = int(request["price"])
 
                 db.session.commit()
+                return True, RoomResponseSchema().dump(room)
         except Exception as ex:
+            db.session.rollback()
             return False, "room_update() error!"
-        return True, RoomResponseSchema().dump(room)
 
 
     @staticmethod

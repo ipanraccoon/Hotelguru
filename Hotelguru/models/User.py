@@ -24,17 +24,16 @@ class User(db.Model):
 
     reservations: Mapped[List["Reservation"]] = relationship(
     back_populates="user",
-    foreign_keys="Reservation.user_id"
+    foreign_keys="[Reservation.user_id]"
     )
 
     approved_reservations: Mapped[List["Reservation"]] = relationship(
     back_populates="approver",
-    foreign_keys="Reservation.approved_by"
+    foreign_keys="[Reservation.approved_by]",
     )
 
     roles: Mapped[List["Role"]] = relationship(secondary=UserRole, back_populates = "users")
 
-    reservations: Mapped[List["Reservation"]] = relationship(back_populates="user")
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
