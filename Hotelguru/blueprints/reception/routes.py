@@ -1,5 +1,6 @@
 from Hotelguru.blueprints.reception import bp
 from Hotelguru.blueprints.reception.service import ReceptionService
+from Hotelguru.blueprints.reception.schemas import AddServiceSchema, ReservationServiceResponseSchema
 from Hotelguru.blueprints.invoice.schemas import InvoiceSchema
 from Hotelguru.blueprints.reservation.schemas import ReservationSchema
 from apiflask import HTTPError
@@ -13,6 +14,16 @@ def index():
 @bp.output(ReservationSchema)
 def check_in(reservationid):
     success, response = ReceptionService.check_in(reservationid)
+    if success:
+        return response, 200
+    raise HTTPError(message=response, status_code=400)
+
+@bp.post('/add_service/<int:reservationid>')
+@bp.doc(tags=["reception"])
+@bp.input(AddServiceSchema)
+@bp.output(ReservationServiceResponseSchema)
+def add_service(reservationid, json_data):
+    success, response = ReceptionService.add_service(reservationid, json_data)
     if success:
         return response, 200
     raise HTTPError(message=response, status_code=400)

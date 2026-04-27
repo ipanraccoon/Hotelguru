@@ -1,6 +1,7 @@
 from apiflask import Schema, fields
 from apiflask.fields import Integer, String, List, Nested, Boolean
 from Hotelguru.blueprints.invoice.schemas import InvoiceSchema
+from Hotelguru.blueprints.reception.schemas import ReservationServiceResponseSchema
 
 class RoomSchema(Schema):
     number = Integer()
@@ -12,7 +13,7 @@ class ReservationSchema(Schema):
     reserved_end_date = String()
     status = String()
     rooms = Nested(RoomSchema, many=True)
-    invoice = fields.Nested(InvoiceSchema)
+    services = Nested(ReservationServiceResponseSchema, many=True)
     
 
     
