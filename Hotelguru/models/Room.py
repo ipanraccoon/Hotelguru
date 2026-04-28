@@ -3,8 +3,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import String, Boolean
 from typing import List
-
-from Hotelguru.models import RoomStatus
+from Hotelguru.models.RoomStatus import RoomStatus
 
 
 class Room(db.Model):
@@ -17,8 +16,11 @@ class Room(db.Model):
     price: Mapped[int | None] = mapped_column(nullable=True)
     
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id"))
-    status_id: Mapped[int | None] = mapped_column(ForeignKey("roomstatuses.id"), nullable=True, name="status_id")
+    status_id: Mapped[int | None] = mapped_column(
+    ForeignKey("roomstatuses.id"),
+    nullable=True
+)
 
     hotel: Mapped["Hotel"] = relationship(back_populates="rooms")
-    roomstatuses: Mapped["RoomStatus"] = relationship(back_populates="rooms")
-    reservations: Mapped[List["ReservationRoom"]] = relationship(back_populates="room")
+    status: Mapped["RoomStatus"] = relationship(back_populates="rooms")
+    reservations: Mapped[List["ReservationRoom"]] = relationship(back_populates="rooms")
