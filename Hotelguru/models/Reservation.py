@@ -1,5 +1,5 @@
 from datetime import datetime
-from Hotelguru.extensions import db
+from Hotelguru.extensions import db, Base
 from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import String
@@ -16,13 +16,7 @@ class Reservation(db.Model):
     created_at: Mapped[datetime] = mapped_column(DateTime)
     approved_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
 
-    user: Mapped["User"] = relationship(
-    foreign_keys=[user_id],
-    back_populates="reservations"
-    )
-
-    approver: Mapped["User"] = relationship(
-    foreign_keys=[approved_by]
-    )
+    user: Mapped["User"] = relationship(foreign_keys=[user_id], back_populates="reservations")
     rooms: Mapped[List["ReservationRoom"]] = relationship(back_populates="reservation")
     invoice: Mapped["Invoice"] = relationship(back_populates="reservation")
+    services: Mapped[List["ReservationService"]] = relationship(back_populates="reservation")
