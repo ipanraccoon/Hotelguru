@@ -28,6 +28,33 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Hotelguru\blueprints\invoice\routes.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\invoice\schemas.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\invoice\service.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\invoice\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\reservation\routes.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\reservation\schemas.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\reservation\service.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\reservation\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Hotelguru\config.py">
       <SubType>Code</SubType>
     </Compile>
@@ -71,6 +98,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Hotelguru\" />
+    <Folder Include="Hotelguru\blueprints\invoice\" />
+    <Folder Include="Hotelguru\blueprints\reservation\" />
     <Folder Include="Hotelguru\models\" />
     <Folder Include="Hotelguru\blueprints\" />
     <Folder Include="Hotelguru\static\" />
@@ -123,6 +152,9 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|VisualStudio|myenv" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
