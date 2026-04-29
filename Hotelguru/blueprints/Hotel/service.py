@@ -1,5 +1,5 @@
 from numbers import Number
-
+import traceback
 from flask import request_tearing_down
 from Hotelguru.extensions import db
 from Hotelguru.blueprints.Hotel.schemas import HotelResponseSchema, HotelRequestSchema
@@ -34,12 +34,13 @@ class HotelService:
             return True, HotelResponseSchema().dump(hotel)
         except Exception as ex:
             db.session.rollback()
+            traceback.print_exc()
             return False, "hotel_add() error"
 
     @staticmethod
     def hotel_update(hid, request):
         try:
-            hotel = db.session.get(Hotel, rid)
+            hotel = db.session.get(Hotel, hid)
 
             if hotel:
                 hotel.name = request["name"]
@@ -51,5 +52,20 @@ class HotelService:
         except Exception as ex:
             db.session.rollback()
             return False, "hotel_update() error!"
+
+    @staticmethod
+    def hotel_delete(hid):
+        try:
+            hotel = db.session.get(Hotel, hid)
+
+            if hotel:
+                db.session.delete(hotel)
+                db.session.commit()
+
+        except Exception as ex:
+             db.session.rollback()
+             return False, "hotel_delete() error"
+        return True, "OK!"
+
 
 

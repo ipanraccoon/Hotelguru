@@ -1,4 +1,5 @@
 import json
+import traceback
 from sre_constants import SUCCESS
 from urllib import response
 from Hotelguru.blueprints.room import bp
@@ -8,29 +9,47 @@ from apiflask.fields import String, Integer
 from apiflask import HTTPError
 
 
-@bp.get('/list/')
+@bp.post('/addhotelroom/')
+@bp.input(RoomRequestSchema)
+@bp.output(RoomResponseSchema)
+def room_add(json_data):
+    succes, response = RoomService.room_add(json_data)
+
+    if not success:
+        return {"message": response}, 400
+    return response
+
+
+@bp.get('/listrooms/')
 @bp.output(RoomListSchema(many=True))
 def room_list_all():
-    SUCCESS, response = RoomService.room_list_all()
-    if SUCCESS:
+    success, response = RoomService.room_list_all()
+    if not success:
+        raise HTTPError(400, message=response)
+    return response
+
+@bp.get('/listrooms/<int:hid>')
+@bp.output(RoomListSchema(many=True))
+def room_list_hotel(hid):
+    succes, response  = RoomService.room_list_hotel(hid)
+
+    if succes:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
 
 
-
-
-@bp.put('/update/<int:rid>')
+@bp.put('/updateroom/<int:rid>')
 @bp.input(RoomRequestSchema, location="json")
 @bp.output(RoomResponseSchema)
 def room_update(rid, json_data):
-    SUCCESS, response = RoomService.room_update(rid, json_data)
-    if SUCCESS:
+    success, response = RoomService.room_update(rid, json_data)
+    if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
 
-@bp.put('/delete/<int:rid>')
+@bp.put('/deleteroom/<int:rid>')
 def room_delete(rid):
-    SUCCESS, response = RoomService.room_delete(rid)
-    if SUCCESS:
+    success, response = RoomService.room_delete(rid)
+    if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400

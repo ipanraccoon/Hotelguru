@@ -1,3 +1,4 @@
+from hmac import new
 import json
 from sre_constants import SUCCESS
 from urllib import response
@@ -8,20 +9,36 @@ from apiflask.fields import String, Integer
 from apiflask import HTTPError
 
 
-@bp.get('/list/')
+@bp.get('/listhotels/')
 @bp.output(HotelResponseSchema(many=True))
 def hotel_list_all():
-    succes, response = HotelService.hotel_list_all()
-    if succes:
-        return response, 200
-    raise HTTPError(status_code=400, message=response)
+    success, response = HotelService.hotel_list_all()
+    if not success:
+        raise HTTPError(400, message=response)
+    return response
 
-@bp.get('/list/<city>')
+@bp.get('/listhotels/<city>')
 @bp.output(HotelRequestSchema(many=True))
 def hotel_list_city(city):
-    succes, response = HotelService.hotel_list_city(city)
+    success, response = HotelService.hotel_list_city(city)
     
-    if succes:
+    if success:
         return response, 200
-    raise HTTPError(status_code=400, message=response)
-    
+    return {"message": response}, 400
+
+@bp.post('/addhotel/')
+@bp.input(HotelRequestSchema)
+@bp.output(HotelResponseSchema)
+def hotel_add(json_data):
+    success, response = HotelService.hotel_add(json_data)
+
+    if not success:
+       return {"message": response}, 400
+    return response
+
+@bp.put('/deletehotel/<int:hid>')
+def hotel_delete(hid):
+    success, response = HotelService.hotel_delete(hid)
+    if success:
+        return response, 200
+    return {"message": response}, 400

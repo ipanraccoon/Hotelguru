@@ -19,7 +19,7 @@ def user_login(json_data):
     SUCCESS, response = UserService.user_login(json_data)
     if SUCCESS:
         return response, 200
-    raise HTTPError(400, message=response)
+    return {"message": response}, 400
 
 @bp.post('/register')
 @bp.doc(tags=["user"])
@@ -29,7 +29,7 @@ def user_register(json_data):
     success, response = UserService.user_register(json_data)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
 
 @bp.get('/roles')
 @bp.doc(tags=["user"])
@@ -47,7 +47,7 @@ def get_user_roles(userid):
     success, response = UserService.get_user_roles(userid)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
 
 @bp.get('/<int:userid>')
 @bp.doc(tags=["user"])
@@ -56,7 +56,7 @@ def get_user(userid):
     success, response = UserService.get_user(userid)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
 
 @bp.put('/<int:userid>')
 @bp.doc(tags=["user"])
@@ -66,4 +66,4 @@ def update_user(userid, json_data):
     success, response = UserService.update_user(userid, json_data)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400

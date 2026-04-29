@@ -11,4 +11,4 @@ def get_services_by_hotel(hotelid):
     success, response = ServiceService.get_services_by_hotel(hotelid)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
