@@ -3,8 +3,12 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <link href="{{ url_for('static', filename='content/bootstrap.min.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='content/bootstrap.min.css') }}" rel="stylesheet" />
     <script src="{{ url_for('static', filename='scripts/bootstrap.min.js') }}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <title>Hotelguru</title>
 </head>
 <body>
@@ -28,29 +32,31 @@
                             </div>
 
                             <!-- Modal body -->
-                            <div class="modal-body">
-                                <div>
-                                    <label for="email">Email:</label>
-                                    <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                            <form method="post">
+                                <div class="modal-body">
+                                    <div>
+                                        <label for="email">Email:</label>
+                                        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                                    </div>
+                                    <div>
+                                        <label for="pwd">Jelszó:</label>
+                                        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" name="remember">Emlékezz rám
+                                        </label>
+                                    </div>
+                                        <a href="#" class="text-danger">Regisztráció</a>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-danger col-12">Bejelentkezés</button>
+                                        <button type="button" class="btn btn-danger col-12" data-bs-dismiss="modal">Mégse</button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label for="pwd">Jelszó:</label>
-                                    <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
-                                </div>
-                                <div class="form-check">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="remember">Emlékezz rám:
-                                    </label>
-                                </div>
-                                <button type="submit" class="btn btn-danger">Bejelentkez</button>
-                                </form>
-                            </div>
-                            </div>
+                        </form>
 
-                            <!-- Modal footer -->
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Mégse</button>
-                            </div>
+                            
+                            
 
                         </div>
                     </div>
@@ -127,10 +133,25 @@
                                 <a class="nav-link" href="javascript:void(0)">Link</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="javascript:void(0)">Link</a>
+                                <div data-coreui-start-date="2022/08/03"
+                                     data-coreui-end-date="2022/08/17"
+                                     data-coreui-locale="en-US"
+                                     data-coreui-toggle="date-range-picker">
+                                </div>
                             </li>
                         </ul>
                         <form class="d-flex">
+                            <input type="text" id="daterange" class="form-control me-2" placeholder="Dátum kiválasztás">
+                            <script>
+                                $(function () {
+                                    $('#daterange').daterangepicker({
+                                        opens: 'center',
+                                        locale: {
+                                            format: 'YYYY-MM-DD'
+                                        }
+                                    });
+                                });
+                            </script>
                             <input class="form-control me-2" type="text" placeholder="Search">
                             <button class="btn btn-danger" type="button">Search</button>
                         </form>
