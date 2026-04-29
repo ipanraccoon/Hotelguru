@@ -139,6 +139,35 @@
             </nav>
         </div>
 
+
+
+        <div id="rooms-container"></div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                fetch("/list")
+                    .then(response => response.json())
+                    .then(data => {
+                        const container = document.getElementById("rooms-container");
+
+                        data.data.forEach(room => {
+                            const div = document.createElement("div");
+                            div.className = "card m-2 p-2";
+
+                            div.innerHTML = `
+                            <h5>Szoba #${room.number}</h5>
+                            <p>Ágyak: ${room.beds}</p>
+                            <p>Konyha: ${room.kitchen ? "Van" : "Nincs"}</p>
+                            <p>Ár: ${room.price ?? "N/A"}</p>
+                        `;
+
+                            container.appendChild(div);
+                        });
+                    })
+                    .catch(err => console.error(err));
+            });
+        </script>
+
     </div>
 </body>
 </html>
