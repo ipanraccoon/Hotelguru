@@ -1,3 +1,4 @@
+from marshmallow import Schema, fields
 from apiflask import Schema
 from apiflask.fields import Integer, String, Email
 from apiflask.validators import Length, Email

@@ -34,9 +34,18 @@
     <Compile Include="Hotelguru\blueprints\hotel\schemas.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Hotelguru\blueprints\hotel\service.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Hotelguru\blueprints\hotel\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Hotelguru\blueprints\invoice\schemas.py" />
+    <Compile Include="Hotelguru\blueprints\reception\routes.py" />
+    <Compile Include="Hotelguru\blueprints\reception\schemas.py" />
+    <Compile Include="Hotelguru\blueprints\reception\service.py" />
+    <Compile Include="Hotelguru\blueprints\reception\__init__.py" />
+    <Compile Include="Hotelguru\blueprints\reservation\schemas.py" />
     <Compile Include="Hotelguru\blueprints\room\routes.py">
       <SubType>Code</SubType>
     </Compile>
@@ -49,6 +58,14 @@
     <Compile Include="Hotelguru\blueprints\room\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Hotelguru\blueprints\service\routes.py" />
+    <Compile Include="Hotelguru\blueprints\service\schemas.py" />
+    <Compile Include="Hotelguru\blueprints\service\service.py" />
+    <Compile Include="Hotelguru\blueprints\service\__init__.py" />
+    <Compile Include="Hotelguru\blueprints\user\routes.py" />
+    <Compile Include="Hotelguru\blueprints\user\schemas.py" />
+    <Compile Include="Hotelguru\blueprints\user\service.py" />
+    <Compile Include="Hotelguru\blueprints\user\__init__.py" />
     <Compile Include="Hotelguru\config.py">
       <SubType>Code</SubType>
     </Compile>
@@ -70,6 +87,7 @@
     <Compile Include="Hotelguru\models\ReservationRoom.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Hotelguru\models\ReservationService.py" />
     <Compile Include="Hotelguru\models\Role.py">
       <SubType>Code</SubType>
     </Compile>
@@ -93,7 +111,17 @@
   <ItemGroup>
     <Folder Include="Hotelguru\" />
     <Folder Include="Hotelguru\blueprints\hotel\" />
+    <Folder Include="Hotelguru\blueprints\invoice\" />
+    <Folder Include="Hotelguru\blueprints\invoice\__pycache__\" />
+    <Folder Include="Hotelguru\blueprints\reception\" />
+    <Folder Include="Hotelguru\blueprints\reception\__pycache__\" />
+    <Folder Include="Hotelguru\blueprints\reservation\" />
+    <Folder Include="Hotelguru\blueprints\reservation\__pycache__\" />
     <Folder Include="Hotelguru\blueprints\room\" />
+    <Folder Include="Hotelguru\blueprints\service\" />
+    <Folder Include="Hotelguru\blueprints\service\__pycache__\" />
+    <Folder Include="Hotelguru\blueprints\user\" />
+    <Folder Include="Hotelguru\blueprints\user\__pycache__\" />
     <Folder Include="Hotelguru\models\" />
     <Folder Include="Hotelguru\blueprints\" />
     <Folder Include="Hotelguru\static\" />
@@ -104,6 +132,20 @@
     <Folder Include="Hotelguru\static\images\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Hotelguru\blueprints\invoice\__pycache__\schemas.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\reception\__pycache__\routes.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\reception\__pycache__\schemas.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\reception\__pycache__\service.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\reception\__pycache__\__init__.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\reservation\__pycache__\schemas.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\service\__pycache__\routes.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\service\__pycache__\schemas.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\service\__pycache__\service.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\service\__pycache__\__init__.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\user\__pycache__\routes.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\user\__pycache__\schemas.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\user\__pycache__\service.cpython-313.pyc" />
+    <Content Include="Hotelguru\blueprints\user\__pycache__\__init__.cpython-313.pyc" />
     <Content Include="Hotelguru\templates\Hotelgurumain.html" />
     <Content Include="Hotelguru\static\images\hotel1.jpg" />
     <Content Include="Hotelguru\static\images\hotel2.jpg" />

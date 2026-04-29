@@ -20,6 +20,14 @@ def create_app(config_class=Config):
     from Hotelguru.blueprints.Hotel import bp as hotel_bp
     app.register_blueprint(hotel_bp)
 
+    from Hotelguru.blueprints.user import bp as bp_user
+    app.register_blueprint(bp_user)
+
+    from Hotelguru.blueprints.reception import bp as bp_reception
+    app.register_blueprint(bp_reception)
+
+    from Hotelguru.blueprints.service import bp as bp_service
+    app.register_blueprint(bp_service)
     return app
 
 from Hotelguru import models, views

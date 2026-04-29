@@ -1,21 +1,25 @@
+import json
+from sre_constants import SUCCESS
 from Hotelguru.blueprints.user import bp
+from urllib import response
 from Hotelguru.blueprints.user.schemas import UserSchema, RoleSchema, LoginSchema, RegisterSchema, UserUpdateSchema
 from Hotelguru.blueprints.user.service import UserService
 from apiflask import HTTPError
+from apiflask.fields import String, Integer
 
 @bp.route('/')
 def index():
     return 'This is The User Blueprint'
 
 @bp.post('/login')
-@bp.doc(tags=["user"])
+@bp.doc(responses={400: {"description": "Invalid login"}})
 @bp.input(LoginSchema, location="json")
-@bp.output(UserSchema)
+@bp.output(UserSchema, status_code=200)
 def user_login(json_data):
-    success, response = UserService.user_login(json_data)
-    if success:
+    SUCCESS, response = UserService.user_login(json_data)
+    if SUCCESS:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    raise HTTPError(400, message=response)
 
 @bp.post('/register')
 @bp.doc(tags=["user"])

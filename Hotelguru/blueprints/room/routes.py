@@ -7,9 +7,6 @@ from Hotelguru.blueprints.room.service import RoomService
 from apiflask.fields import String, Integer
 from apiflask import HTTPError
 
-@bp.route('/')
-def index():
-    return 'This is The Room Blueprint'
 
 @bp.get('/list/')
 @bp.output(RoomListSchema(many=True))

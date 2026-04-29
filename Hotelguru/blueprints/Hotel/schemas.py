@@ -11,3 +11,8 @@ class HotelResponseSchema(Schema):
     city = fields.String()
     address = fields.String()
     rating = fields.Float()
+
+class HotelRequestSchema(Schema):
+    name = fields.String()
+    city = fields.String()
+    address = fields.String()
