@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="/static/scripts/API_points.js"></script>
     <title>Hotelguru</title>
 </head>
 <body>
@@ -32,7 +33,7 @@
                             </div>
 
                             <!-- Modal body -->
-                            <form method="post">
+                            <form method="post" id="loginForm">
                                 <div class="modal-body">
                                     <div>
                                         <label for="email">Email:</label>
@@ -40,29 +41,82 @@
                                     </div>
                                     <div>
                                         <label for="pwd">Jelszó:</label>
-                                        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
+                                        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password">
                                     </div>
                                     <div class="form-check">
                                         <label class="form-check-label">
                                             <input class="form-check-input" type="checkbox" name="remember">Emlékezz rám
                                         </label>
                                     </div>
-                                        <a href="#" class="text-danger">Regisztráció</a>
+                                    <button type="button"
+                                            class="btn btn-link text-danger p-0"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#Register"
+                                            data-bs-dismiss="modal">
+                                        Regisztráció
+                                    </button>
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-danger col-12">Bejelentkezés</button>
                                         <button type="button" class="btn btn-danger col-12" data-bs-dismiss="modal">Mégse</button>
                                     </div>
                                 </div>
-                        </form>
+                            </form>
 
-                            
-                            
+
+                            <div class="modal" id="Register">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Regisztráció</h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+
+                                        <form id="registerForm">
+                                            <div class="modal-body">
+
+                                                <div>
+                                                    <label>Név:</label>
+                                                    <input type="text" class="form-control" id="reg_name">
+                                                </div>
+
+                                                <div>
+                                                    <label>Email:</label>
+                                                    <input type="email" class="form-control" id="reg_email">
+                                                </div>
+
+                                                <div>
+                                                    <label>Jelszó:</label>
+                                                    <input type="password" class="form-control" id="reg_password">
+                                                </div>
+
+                                                <div>
+                                                    <label>Telefonszám:</label>
+                                                    <input type="text" class="form-control" id="reg_phone">
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-danger col-12">Regisztráció</button>
+                                                    <button type="button" class="btn btn-secondary col-12" data-bs-dismiss="modal">Mégse</button>
+                                                </div>
+
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
+
+       
+
         <div class="row">
 
 
@@ -152,12 +206,16 @@
                                     });
                                 });
                             </script>
-                            <input class="form-control me-2" type="text" placeholder="Search">
-                            <button class="btn btn-danger" type="button">Search</button>
+                            <input id="citySearch" class="form-control me-2" type="text" placeholder="Város neve">
+                            <button id="searchBtn" class="btn btn-danger" type="button">Search</button>
                         </form>
                     </div>
                 </div>
             </nav>
+        </div>
+
+        <div class="container mt-3">
+            <div id="hotelResults" class="row"></div>
         </div>
 
     </div>

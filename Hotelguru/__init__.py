@@ -5,6 +5,7 @@ from Hotelguru.config import Config
 
 def create_app(config_class=Config):
     app = APIFlask(__name__, json_errors=True, docs_path="/swagger", title="Hotelguru")
+    app.config["JSON_AS_ASCII"] = False
     app.config.from_object(config_class)
     
     db.init_app(app)

@@ -18,7 +18,7 @@ def hotel_list_all():
     return response
 
 @bp.get('/listhotels/<city>')
-@bp.output(HotelRequestSchema(many=True))
+@bp.output(HotelResponseSchema(many=True))
 def hotel_list_city(city):
     success, response = HotelService.hotel_list_city(city)
     
