@@ -18,6 +18,7 @@ class Room(db.Model):
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id"))
     status_id: Mapped[int | None] = mapped_column(
     ForeignKey("roomstatuses.id"),
+    #Sdwwdwdwdw
     nullable=True
 )
 
