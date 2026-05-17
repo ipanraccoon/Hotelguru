@@ -5,6 +5,8 @@ from Hotelguru.models.Role import Role
 from datetime import datetime, timedelta
 from authlib.jose import jwt
 from flask import current_app
+from Hotelguru.extensions import auth
+
 
 
 
@@ -44,8 +46,8 @@ class UserService:
         return True, RoleSchema().dump(roles,many=True)
 
     @staticmethod
-    def get_user_roles(userid):
-        user=db.session.execute(db.select(User).filter_by(id=userid)).scalar_one_or_none()
+    def get_user_roles():
+        user=db.session.execute(db.select(User).filter_by(id=auth.current_user["user_id"])).scalar_one_or_none()
         if not user:
             return False, "User not found"
         return True, RoleSchema().dump(user.roles,many=True)
