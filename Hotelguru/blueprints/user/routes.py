@@ -1,5 +1,6 @@
 import json
 from Hotelguru.blueprints.user import bp
+from Hotelguru.blueprints import role_required
 from urllib import response
 from Hotelguru.blueprints.user.schemas import UserSchema, RoleSchema, LoginSchema, RegisterSchema, UserUpdateSchema
 from Hotelguru.blueprints.user.service import UserService
@@ -45,6 +46,7 @@ def get_all_roles():
 @bp.doc(tags=["user"])
 @bp.output(RoleSchema(many=True))
 @bp.auth_required(auth)
+@role_required(["Vendég"])
 def get_user_roles():
     success, response = UserService.get_user_roles()
     if success:
