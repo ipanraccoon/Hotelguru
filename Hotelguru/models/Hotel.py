@@ -1,6 +1,6 @@
 from Hotelguru.extensions import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.types import String
+from sqlalchemy.types import String, Double
 from typing import List
 
 
@@ -11,6 +11,7 @@ class Hotel(db.Model):
     name: Mapped[str] = mapped_column(String(30))
     city: Mapped[str] = mapped_column(String(30))
     address: Mapped[str] = mapped_column(String(30))
+    rating: Mapped[float | None] = mapped_column(Double, nullable=True)
 
     rooms: Mapped[List["Room"]] = relationship(back_populates="hotel")
     services: Mapped[List["Service"]] = relationship(back_populates="hotel")

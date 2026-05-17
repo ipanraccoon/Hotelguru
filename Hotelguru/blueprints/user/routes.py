@@ -1,21 +1,24 @@
+import json
 from Hotelguru.blueprints.user import bp
+from urllib import response
 from Hotelguru.blueprints.user.schemas import UserSchema, RoleSchema, LoginSchema, RegisterSchema, UserUpdateSchema
 from Hotelguru.blueprints.user.service import UserService
 from apiflask import HTTPError
+from apiflask.fields import String, Integer
 
 @bp.route('/')
 def index():
     return 'This is The User Blueprint'
 
 @bp.post('/login')
-@bp.doc(tags=["user"])
+@bp.doc(responses={400: {"description": "Invalid login"}})
 @bp.input(LoginSchema, location="json")
-@bp.output(UserSchema)
+@bp.output(UserSchema, status_code=200)
 def user_login(json_data):
-    success, response = UserService.user_login(json_data)
-    if success:
+    sucess, response = UserService.user_login(json_data)
+    if sucess:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
 
 @bp.post('/register')
 @bp.doc(tags=["user"])
@@ -25,7 +28,7 @@ def user_register(json_data):
     success, response = UserService.user_register(json_data)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
 
 @bp.get('/roles')
 @bp.doc(tags=["user"])
@@ -43,7 +46,7 @@ def get_user_roles(userid):
     success, response = UserService.get_user_roles(userid)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
 
 @bp.get('/<int:userid>')
 @bp.doc(tags=["user"])
@@ -52,7 +55,7 @@ def get_user(userid):
     success, response = UserService.get_user(userid)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
 
 @bp.put('/<int:userid>')
 @bp.doc(tags=["user"])
@@ -62,4 +65,4 @@ def update_user(userid, json_data):
     success, response = UserService.update_user(userid, json_data)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
