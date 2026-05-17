@@ -1,5 +1,5 @@
 from apiflask import Schema
-from apiflask.fields import Integer, String, Email
+from apiflask.fields import Integer, String, Email, List, Nested
 from apiflask.validators import Length, Email
 
 
@@ -13,6 +13,7 @@ class UserSchema(Schema):
     name = String()
     email = String()
     phone = String()
+    token = String()
 
 class RoleSchema(Schema):
     id = Integer()
@@ -28,3 +29,8 @@ class UserUpdateSchema(Schema):
     name = String(validate=Length(max=30))
     email = String(validate=Email())
     phone = String(validate=Length(max=30))
+
+class PayloadSchema(Schema):
+    user_id = Integer()
+    roles  = List(Nested(RoleSchema))
+    exp = Integer()
