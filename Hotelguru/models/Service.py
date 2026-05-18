@@ -2,6 +2,8 @@ from Hotelguru.extensions import db
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import String
+from typing import List
+
 
 
 class Service(db.Model):
@@ -13,3 +15,4 @@ class Service(db.Model):
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id"))
     
     hotel: Mapped["Hotel"] = relationship(back_populates="services")
+    reservations: Mapped[List["ReservationService"]] = relationship(back_populates="service")
