@@ -22,11 +22,6 @@ class User(db.Model):
     password: Mapped[str] = mapped_column(String(255))
     phone: Mapped[str] = mapped_column(String(30))
 
-    reservations: Mapped[List["Reservation"]] = relationship(
-    back_populates="user",
-    foreign_keys="[Reservation.user_id]"
-    )
-
     approved_reservations: Mapped[List["Reservation"]] = relationship(
     back_populates="approver",
     foreign_keys="[Reservation.approved_by]",

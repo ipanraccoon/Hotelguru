@@ -1,11 +1,13 @@
 import json
-from sre_constants import SUCCESS
 from Hotelguru.blueprints.user import bp
+from Hotelguru.blueprints import role_required
 from urllib import response
 from Hotelguru.blueprints.user.schemas import UserSchema, RoleSchema, LoginSchema, RegisterSchema, UserUpdateSchema
 from Hotelguru.blueprints.user.service import UserService
 from apiflask import HTTPError
 from apiflask.fields import String, Integer
+from Hotelguru.extensions import auth
+
 
 @bp.route('/')
 def index():
@@ -16,8 +18,8 @@ def index():
 @bp.input(LoginSchema, location="json")
 @bp.output(UserSchema, status_code=200)
 def user_login(json_data):
-    SUCCESS, response = UserService.user_login(json_data)
-    if SUCCESS:
+    sucess, response = UserService.user_login(json_data)
+    if sucess:
         return response, 200
     return {"message": response}, 400
 
@@ -40,11 +42,13 @@ def get_all_roles():
         return response, 200
     raise HTTPError(message=response, status_code=400)
 
-@bp.get('/roles/<int:userid>')
+@bp.get('/userroles')
 @bp.doc(tags=["user"])
 @bp.output(RoleSchema(many=True))
-def get_user_roles(userid):
-    success, response = UserService.get_user_roles(userid)
+@bp.auth_required(auth)
+@role_required(["Vendég"])
+def get_user_roles():
+    success, response = UserService.get_user_roles()
     if success:
         return response, 200
     return {"message": response}, 400
