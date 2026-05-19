@@ -7,7 +7,7 @@ from Hotelguru.models.Service import Service
 from Hotelguru.models.ReservationService import ReservationService
 from Hotelguru.extensions import db
 from Hotelguru.blueprints.invoice.schemas import InvoiceSchema
-from Hotelguru.blueprints.reservation.schemas import ReservationSchema
+from Hotelguru.blueprints.reservation.schemas import ReservationResponseSchema
 from Hotelguru.blueprints.reception.schemas import ReservationServiceResponseSchema
 from datetime import date, datetime
 

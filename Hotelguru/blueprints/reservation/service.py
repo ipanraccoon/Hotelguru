@@ -25,23 +25,27 @@ class ReservationService:
             db.session.flush()
 
             for room_id in data["room_ids"]:
+
                 room = db.session.get(Room, room_id)
 
                 if not room:
                     db.session.rollback()
                     return False, f"Room {room_id} not found"
+
                 rr = ReservationRoom()
 
                 rr.reservation_id = resevation.id
                 rr.room_id = room_id
 
+                rr.price_per_night = room.price
+
                 db.session.add(rr)
-                return True, ReservationResponseSchema().dump(resevation)
-            
+
             db.session.commit()
 
+            return True, ReservationResponseSchema().dump(resevation)
 
         except Exception as ex:
             db.session.rollback()
-
+            print(ex)
             return False, str(ex)

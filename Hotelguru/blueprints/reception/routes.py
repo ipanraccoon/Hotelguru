@@ -2,7 +2,7 @@ from Hotelguru.blueprints.reception import bp
 from Hotelguru.blueprints.reception.service import ReceptionService
 from Hotelguru.blueprints.reception.schemas import AddServiceSchema, ReservationServiceResponseSchema
 from Hotelguru.blueprints.invoice.schemas import InvoiceSchema
-from Hotelguru.blueprints.reservation.schemas import ReservationSchema
+from Hotelguru.blueprints.reservation.schemas import ReservationResponseSchema
 from apiflask import HTTPError
 
 @bp.route('/')
@@ -11,7 +11,7 @@ def index():
 
 @bp.put('/check_in/<int:reservationid>')
 @bp.doc(tags=["reception"])
-@bp.output(ReservationSchema)
+@bp.output(ReservationResponseSchema)
 def check_in(reservationid):
     success, response = ReceptionService.check_in(reservationid)
     if success:
