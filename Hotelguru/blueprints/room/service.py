@@ -1,6 +1,8 @@
 from numbers import Number
 from Hotelguru.extensions import db
 from Hotelguru.blueprints.room.schemas import RoomRequestSchema, RoomResponseSchema, RoomStatusSchema, RoomListSchema
+from Hotelguru.models.Reservation import Reservation
+from Hotelguru.models.ReservationRoom import ReservationRoom
 from Hotelguru.models.RoomStatus import RoomStatus
 from Hotelguru.models.Hotel import Hotel
 from Hotelguru.models.Room import Room
@@ -80,3 +82,36 @@ class RoomService:
             db.session.rollback()
             return False, "room_delete() error!"
         return True, "OK!"
+
+    @staticmethod
+    def room_list_date(start_date, end_date):
+        reserved_rooms = (select(ReservationRoom.room_id)
+                          .join(Reservation)
+                          .where(and_
+                                 (
+                                     Reservation.status != "Cancelled",
+                                     Reservation.reserved_start_date <= end_date,
+                                     Reservation.reserved_end_date >= start_date
+                                 )))
+        rooms = db.session.execute(
+            select(Room).where(~Room.id.in_(reserved_rooms))
+            ).scalars().all()
+
+        return True, RoomListSchema().dump(rooms, many=True)
+
+    @staticmethod
+    def room_list_avalible(city, start_date, end_date):
+        rooms = db.session.execute(
+            select(Room)
+            .join(Hotel, Room.hotel_id == Hotel.id)
+            .where(Hotel.city == city)
+            .where(~Room.reservations.any(
+                ReservationRoom.reservation.has(and_(
+                    Reservation.status != "Cancelled",
+                    Reservation.reserved_start_date <= end_date,
+                    Reservation.reserved_end_date >= start_date
+                    ))
+                ))
+            ).scalars().all()
+
+        return True, RoomListSchema().dump(rooms, many=True)
