@@ -13,10 +13,13 @@ def index():
 @bp.doc(tags=["reception"])
 @bp.output(ReservationResponseSchema)
 def check_in(reservationid):
-    success, response = ReceptionService.check_in(reservationid)
-    if success:
-        return response, 200
-    raise HTTPError(message=response, status_code=400)
+    try:
+        success, response = ReceptionService.check_in(reservationid)
+        if success:
+            return response, 200
+        return {"message": response}, 400
+    except Exception as ex:
+        return {"ERROR": str(ex)}, 500
 
 @bp.post('/add_service/<int:reservationid>')
 @bp.doc(tags=["reception"])
@@ -26,13 +29,16 @@ def add_service(reservationid, json_data):
     success, response = ReceptionService.add_service(reservationid, json_data)
     if success:
         return response, 200
-    raise HTTPError(message=response, status_code=400)
+    return {"message": response}, 400
 
 @bp.put('/check_out/<int:reservationid>')
 @bp.doc(tags=["reception"])
 @bp.output(InvoiceSchema)
 def check_out(reservationid):
-    success, response = ReceptionService.check_out(reservationid)
-    if success:
-        return response, 200
-    raise HTTPError(message=response, status_code=400)
+    try:
+        success, response = ReceptionService.check_out(reservationid)
+        if success:
+            return response, 200
+        return {"message": response}, 400
+    except Exception as ex:
+        return {"ERROR": str(ex)}, 500

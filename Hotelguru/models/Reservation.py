@@ -1,6 +1,6 @@
-from datetime import datetime
+from datetime import datetime, date
 from Hotelguru.extensions import db, Base
-from sqlalchemy import ForeignKey, DateTime
+from sqlalchemy import ForeignKey, DateTime, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import String
 from typing import List
@@ -10,10 +10,10 @@ class Reservation(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key = True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    reserved_start_date: Mapped[datetime] = mapped_column(DateTime)
-    reserved_end_date: Mapped[datetime] = mapped_column(DateTime)
+    reserved_start_date: Mapped[date] = mapped_column(Date)
+    reserved_end_date: Mapped[date] = mapped_column(Date)
     status: Mapped[str] = mapped_column(String(30))
-    created_at: Mapped[datetime] = mapped_column(DateTime)
+    created_at: Mapped[date] = mapped_column(Date)
     approved_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
 
     approver: Mapped["User"] = relationship(

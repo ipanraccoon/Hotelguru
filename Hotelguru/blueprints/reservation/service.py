@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from Hotelguru.extensions import db
 from Hotelguru.models.Reservation import Reservation
 from Hotelguru.models.ReservationRoom import ReservationRoom

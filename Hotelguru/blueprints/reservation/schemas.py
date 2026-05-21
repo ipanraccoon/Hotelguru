@@ -8,8 +8,8 @@ from Hotelguru.blueprints.reception.schemas import ReservationServiceResponseSch
 class ReservationRequestSchema(Schema):
     user_id = Integer(required=True)
 
-    reserved_start_date = DateTime(required=True)
-    reserved_end_date = DateTime(required=True)
+    reserved_start_date = Date(required=True)
+    reserved_end_date = Date(required=True)
 
     room_ids = List(Integer(), required=True)
 
@@ -18,8 +18,8 @@ class ReservationResponseSchema(Schema):
 
     user_id = Integer()
 
-    reserved_start_date = DateTime()
-    reserved_end_date = DateTime()
+    reserved_start_date = Date()
+    reserved_end_date = Date()
 
     status = String()
 

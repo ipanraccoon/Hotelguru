@@ -41,6 +41,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Hotelguru\blueprints\invoice\schemas.py" />
+    <Compile Include="Hotelguru\blueprints\invoice\service.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Hotelguru\blueprints\reception\routes.py" />
     <Compile Include="Hotelguru\blueprints\reception\schemas.py" />
     <Compile Include="Hotelguru\blueprints\reception\service.py" />
