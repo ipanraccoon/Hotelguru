@@ -11,7 +11,7 @@ def index():
 
 @bp.put('/check_in/<int:reservationid>')
 @bp.doc(tags=["reception"])
-@bp.output(ReservationResponseSchema)
+#@bp.output(ReservationResponseSchema)
 def check_in(reservationid):
     try:
         success, response = ReceptionService.check_in(reservationid)
@@ -33,7 +33,7 @@ def add_service(reservationid, json_data):
 
 @bp.put('/check_out/<int:reservationid>')
 @bp.doc(tags=["reception"])
-@bp.output(InvoiceSchema)
+#@bp.output(InvoiceSchema)
 def check_out(reservationid):
     try:
         success, response = ReceptionService.check_out(reservationid)
