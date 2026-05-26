@@ -87,6 +87,9 @@
     <Compile Include="Hotelguru\models\Hotel.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Hotelguru\models\HotelReview.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Hotelguru\models\Invoice.py">
       <SubType>Code</SubType>
     </Compile>

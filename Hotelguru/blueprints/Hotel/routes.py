@@ -3,7 +3,7 @@ import json
 from sre_constants import SUCCESS
 from urllib import response
 from Hotelguru.blueprints.Hotel import bp
-from Hotelguru.blueprints.Hotel.schemas import HotelResponseSchema, HotelRequestSchema
+from Hotelguru.blueprints.Hotel.schemas import HotelResponseSchema, HotelRequestSchema, HotelReviewRequestSchema, HotelReviewResponseSchema
 from Hotelguru.blueprints.Hotel.service import HotelService
 from apiflask.fields import String, Integer
 from apiflask import HTTPError
@@ -41,4 +41,16 @@ def hotel_delete(hid):
     success, response = HotelService.hotel_delete(hid)
     if success:
         return response, 200
+    return {"message": response}, 400
+
+@bp.post('/review/add')
+@bp.input(HotelReviewRequestSchema, location="json")
+@bp.output(HotelReviewResponseSchema)
+def add_review(json_data):
+
+    success, response = (HotelService.add_review(json_data))
+
+    if success:
+        return response, 200
+
     return {"message": response}, 400

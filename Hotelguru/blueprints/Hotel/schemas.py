@@ -1,3 +1,4 @@
+from datetime import datetime
 from marshmallow import Schema, fields
 from apiflask.fields import String, Email, Nested, Integer, List
 from apiflask.validators import Length, OneOf, Email
@@ -16,3 +17,27 @@ class HotelRequestSchema(Schema):
     name = fields.String()
     city = fields.String()
     address = fields.String()
+
+class HotelReviewRequestSchema(Schema):
+
+    user_id = Integer(required=True)
+
+    hotel_id = Integer(required=True)
+
+    rating = Integer(required=True)
+
+    comment = String()
+
+class HotelReviewResponseSchema(Schema):
+
+    id = Integer()
+
+    rating = Integer()
+
+    comment = String()
+
+    created_at = DateTime()
+
+    user_id = Integer()
+
+    hotel_id = Integer()
