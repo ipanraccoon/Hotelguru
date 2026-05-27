@@ -15,3 +15,4 @@ class Hotel(db.Model):
 
     rooms: Mapped[List["Room"]] = relationship(back_populates="hotel")
     services: Mapped[List["Service"]] = relationship(back_populates="hotel")
+    reviews: Mapped[List["HotelReview"]] = relationship(back_populates="hotels")

@@ -33,3 +33,7 @@ class RoomListSchema(Schema):
     price = fields.Integer()
     status = fields.Nested(RoomStatusSchema)
     hotel = fields.Nested(HotelResponseSchema)
+
+class RoomAvalibleDateSchema(Schema):
+    start_date = fields.DateTime()
+    end_date = fields.DateTime()

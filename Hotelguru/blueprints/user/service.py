@@ -1,7 +1,11 @@
 from Hotelguru.models.User import User
 from Hotelguru.extensions import db
-from Hotelguru.blueprints.user.schemas import UserSchema, RoleSchema
+from Hotelguru.blueprints.user.schemas import UserSchema, RoleSchema, PayloadSchema
 from Hotelguru.models.Role import Role
+from datetime import datetime, timedelta
+from authlib.jose import jwt
+from flask import current_app
+from Hotelguru.extensions import auth
 
 
 
@@ -13,7 +17,9 @@ class UserService:
         password = data["password"]
         user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
         if user and user.check_password(password):
-            return True, UserSchema().dump(user)
+            user_schema = UserSchema().dump(user)
+            user_schema["token"] = UserService.token_generate(user)
+            return True, user_schema
         else:
             return False, "Invalid email or password"
     
@@ -32,7 +38,7 @@ class UserService:
             return True, UserSchema().dump(new_user)
         except Exception as e:
             db.session.rollback()
-            return False, f"Something went wrong: {str(e)}"
+            return False, f"Something went wrong"
 
     @staticmethod
     def get_all_roles():
@@ -40,8 +46,8 @@ class UserService:
         return True, RoleSchema().dump(roles,many=True)
 
     @staticmethod
-    def get_user_roles(userid):
-        user=db.session.execute(db.select(User).filter_by(id=userid)).scalar_one_or_none()
+    def get_user_roles():
+        user=db.session.execute(db.select(User).filter_by(id=auth.current_user["user_id"])).scalar_one_or_none()
         if not user:
             return False, "User not found"
         return True, RoleSchema().dump(user.roles,many=True)
@@ -67,3 +73,14 @@ class UserService:
             setattr(user, key, value)
         db.session.commit()
         return True, UserSchema().dump(user)
+
+
+
+    @staticmethod
+    def token_generate(user : User):
+        payload = PayloadSchema()
+        payload.exp = int((datetime.now()+ timedelta(minutes=30)).timestamp())
+        payload.user_id = user.id
+        payload.roles = RoleSchema().dump(obj=user.roles, many=True)
+
+        return jwt.encode({'alg': 'RS256'}, PayloadSchema().dump(payload), current_app.config['SECRET_KEY']).decode()

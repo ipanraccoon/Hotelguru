@@ -41,11 +41,23 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Hotelguru\blueprints\invoice\schemas.py" />
+    <Compile Include="Hotelguru\blueprints\invoice\service.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Hotelguru\blueprints\reception\routes.py" />
     <Compile Include="Hotelguru\blueprints\reception\schemas.py" />
     <Compile Include="Hotelguru\blueprints\reception\service.py" />
     <Compile Include="Hotelguru\blueprints\reception\__init__.py" />
+    <Compile Include="Hotelguru\blueprints\reservation\routes.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Hotelguru\blueprints\reservation\schemas.py" />
+    <Compile Include="Hotelguru\blueprints\reservation\service.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\blueprints\reservation\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Hotelguru\blueprints\room\routes.py">
       <SubType>Code</SubType>
     </Compile>
@@ -73,6 +85,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Hotelguru\models\Hotel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotelguru\models\HotelReview.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Hotelguru\models\Invoice.py">

@@ -3,7 +3,7 @@ import traceback
 from sre_constants import SUCCESS
 from urllib import response
 from Hotelguru.blueprints.room import bp
-from Hotelguru.blueprints.room.schemas import RoomRequestSchema, RoomResponseSchema, RoomStatusSchema, RoomListSchema
+from Hotelguru.blueprints.room.schemas import RoomRequestSchema, RoomResponseSchema, RoomStatusSchema, RoomListSchema, RoomAvalibleDateSchema
 from Hotelguru.blueprints.room.service import RoomService
 from apiflask.fields import String, Integer
 from apiflask import HTTPError
@@ -52,4 +52,29 @@ def room_delete(rid):
     success, response = RoomService.room_delete(rid)
     if success:
         return response, 200
+    return {"message": response}, 400
+
+@bp.get('/avalible')
+@bp.input(RoomAvalibleDateSchema, location="query")
+@bp.output(RoomListSchema(many=True))
+def room_list_avalibe(query_data):
+    succes, response = RoomService.room_list_date(query_data["start_date"], query_data["end_date"])
+
+    if succes:
+        return response, 200
+    return {"message":response}, 400
+
+@bp.get('/available/<city>/<start_date>/<end_date>')
+@bp.output(RoomListSchema(many=True))
+def room_available(city, start_date, end_date):
+
+    success, response = RoomService.room_list_available(
+        city,
+        start_date,
+        end_date
+    )
+
+    if success:
+        return response, 200
+
     return {"message": response}, 400

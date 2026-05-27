@@ -9,3 +9,4 @@ import Hotelguru.models.ReservationRoom
 import Hotelguru.models.Invoice
 import Hotelguru.models.InvoiceItem
 import Hotelguru.models.RoomStatus
+import Hotelguru.models.HotelReview

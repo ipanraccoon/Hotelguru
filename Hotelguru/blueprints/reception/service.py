@@ -7,7 +7,7 @@ from Hotelguru.models.Service import Service
 from Hotelguru.models.ReservationService import ReservationService
 from Hotelguru.extensions import db
 from Hotelguru.blueprints.invoice.schemas import InvoiceSchema
-from Hotelguru.blueprints.reservation.schemas import ReservationSchema
+from Hotelguru.blueprints.reservation.schemas import ReservationResponseSchema
 from Hotelguru.blueprints.reception.schemas import ReservationServiceResponseSchema
 from datetime import date, datetime
 
@@ -26,12 +26,12 @@ class ReceptionService:
             if reservation.status == "Checked-In":
                 return False, "Guest is already checked in."
 
-            if reservation.reserved_start_date.date() > date.today():
+            if reservation.reserved_start_date > date.today():
                 return False, "Too early check in."
             
             reservation.status = "Checked-In"
             db.session.commit()
-            return True, ReservationSchema().dump(reservation)
+            return True, ReservationResponseSchema().dump(reservation)
         except Exception as e:
             db.session.rollback()
             return False, f"Something went wrong: {str(e)}"
