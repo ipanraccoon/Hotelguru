@@ -56,18 +56,32 @@ def get_user_roles():
 @bp.get('/<int:userid>')
 @bp.doc(tags=["user"])
 @bp.output(UserSchema)
+@bp.auth_required(auth)
+@role_required(["Adminisztrátor"])
 def get_user(userid):
     success, response = UserService.get_user(userid)
     if success:
         return response, 200
     return {"message": response}, 400
 
-@bp.put('/<int:userid>')
+@bp.get('/getuser')
+@bp.doc(tags=["user"])
+@bp.output(UserSchema)
+@bp.auth_required(auth)
+def get_current_user():
+    userid=auth.current_user["user_id"]
+    success, response = UserService.get_user(userid)
+    if success:
+        return response, 200
+    return {"message": response}, 400
+
+@bp.put('/updateuser')
 @bp.doc(tags=["user"])
 @bp.input(UserUpdateSchema, location="json")
 @bp.output(UserSchema)
-def update_user(userid, json_data):
-    success, response = UserService.update_user(userid, json_data)
+@bp.auth_required(auth)
+def update_user(json_data):
+    success, response = UserService.update_user(json_data)
     if success:
         return response, 200
     return {"message": response}, 400

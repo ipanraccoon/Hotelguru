@@ -1,6 +1,6 @@
 from datetime import datetime
 from marshmallow import Schema, fields
-from apiflask.fields import String, Email, Nested, Integer, List
+from apiflask.fields import String, Email, Nested, Integer, List, DateTime
 from apiflask.validators import Length, OneOf, Email
 from Hotelguru.models.Room import Room
 from Hotelguru.models.RoomStatus import RoomStatus
