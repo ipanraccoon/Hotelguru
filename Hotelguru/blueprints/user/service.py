@@ -61,7 +61,8 @@ class UserService:
         return True, UserSchema().dump(user)
     
     @staticmethod    
-    def update_user(userid, data):
+    def update_user(data):
+        userid = auth.current_user["user_id"]
         user=db.session.execute(db.select(User).filter_by(id=userid)).scalar_one_or_none()
         if not user:
             return False, "User not found"

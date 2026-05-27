@@ -3,6 +3,7 @@ from flask import current_app
 from authlib.jose import jwt
 from datetime import datetime
 from apiflask import HTTPError
+import functools
 
 @auth.verify_token
 def verify_token(token):
@@ -19,6 +20,7 @@ def verify_token(token):
 
 def role_required(roles):
     def wrapper(fn):
+        @functools.wraps(fn)
         def decorated_function(*args, **kwargs):
             user_roles = [item["name"] for item in auth.current_user.get("roles")]
             for role in roles:
