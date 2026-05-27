@@ -7,13 +7,17 @@ from Hotelguru.blueprints.room.schemas import RoomRequestSchema, RoomResponseSch
 from Hotelguru.blueprints.room.service import RoomService
 from apiflask.fields import String, Integer
 from apiflask import HTTPError
+from Hotelguru.extensions import auth
+from Hotelguru.blueprints import role_required
 
 
 @bp.post('/addhotelroom/')
 @bp.input(RoomRequestSchema)
 @bp.output(RoomResponseSchema)
+@bp.auth_required(auth)
+@role_required(["Adminisztrátor"])
 def room_add(json_data):
-    succes, response = RoomService.room_add(json_data)
+    success, response = RoomService.room_add(json_data)
 
     if not success:
         return {"message": response}, 400
@@ -41,6 +45,8 @@ def room_list_hotel(hid):
 @bp.put('/updateroom/<int:rid>')
 @bp.input(RoomRequestSchema, location="json")
 @bp.output(RoomResponseSchema)
+@bp.auth_required(auth)
+@role_required(["Adminisztrátor"])
 def room_update(rid, json_data):
     success, response = RoomService.room_update(rid, json_data)
     if success:
@@ -48,6 +54,8 @@ def room_update(rid, json_data):
     return {"message": response}, 400
 
 @bp.put('/deleteroom/<int:rid>')
+@bp.auth_required(auth)
+@role_required(["Adminisztrátor"])
 def room_delete(rid):
     success, response = RoomService.room_delete(rid)
     if success:

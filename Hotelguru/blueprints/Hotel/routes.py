@@ -7,6 +7,8 @@ from Hotelguru.blueprints.Hotel.schemas import HotelResponseSchema, HotelRequest
 from Hotelguru.blueprints.Hotel.service import HotelService
 from apiflask.fields import String, Integer
 from apiflask import HTTPError
+from Hotelguru.extensions import auth
+from Hotelguru.blueprints import role_required
 
 
 @bp.get('/listhotels/')
@@ -29,6 +31,8 @@ def hotel_list_city(city):
 @bp.post('/addhotel/')
 @bp.input(HotelRequestSchema)
 @bp.output(HotelResponseSchema)
+@bp.auth_required(auth)
+@role_required(["Adminisztrátor"])
 def hotel_add(json_data):
     success, response = HotelService.hotel_add(json_data)
 
@@ -37,6 +41,8 @@ def hotel_add(json_data):
     return response
 
 @bp.put('/deletehotel/<int:hid>')
+@bp.auth_required(auth)
+@role_required(["Adminisztrátor"])
 def hotel_delete(hid):
     success, response = HotelService.hotel_delete(hid)
     if success:

@@ -14,7 +14,7 @@ class RoomService:
     def room_add(request):
         try:
            hotel = db.session.get(Hotel, request["hotel_id"])
-           status = db.session.get(RoomStatus, request["roomstatus_id"])
+           status = db.session.get(RoomStatus, request["status_id"])
 
            if not hotel:
                return False, "Invalid hotelID"
