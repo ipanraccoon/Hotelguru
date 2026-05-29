@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-
+<h4>Szobák:</h4>
 <table>
     {% for room in rooms %}
     <tr><td>id: {{ room.id }}</td><td>Szobaszám: {{ room.number }}</td><td>Ágyak száma: {{ room.beds }}</td><td>Konyha: {{ room.kitchen }}</td><td>Ár egy éjszakára: {{ room.price }}</td><td>{{ room.status.name }}</td></tr>
@@ -101,4 +101,12 @@
 </p>
 </td></tr></table></p>
 {% endif %}
+<p>
+    <h4>Szolgáltatások:</h4>
+    <table>
+        {% for service in services %}
+        <tr><td>id: {{ service.id }}</td><td>Név: {{ service.name }}</td><td>Ár: {{ service.price }}</td></tr>
+        {% endfor %}
+    </table>
+</p>
 {% endblock %}

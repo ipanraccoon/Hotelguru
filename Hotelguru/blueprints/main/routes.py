@@ -39,7 +39,9 @@ def home():
             flash("Login failed")
         return redirect("/")
     user = get_user_from_session()
-    roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
+    roles = []
+    if user:
+        roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
 
     newhotelform = NewHotel()
     if newhotelform.validate_on_submit() and newhotelform.submit_add.data:
@@ -121,8 +123,11 @@ def rooms(hid):
     rooms = response.json()
     
     user = get_user_from_session()
-    roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
-
+    roles=[]
+    if user:
+        roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
+    services = requests.get(request.host_url + "services/"+hid).json()
+    print(request.host_url)
 
     newroomform = NewRoom()
     if newroomform.validate_on_submit() and newroomform.submit_add.data:
@@ -166,4 +171,4 @@ def rooms(hid):
         return redirect(f"/rooms/{hid}")
 
 
-    return render_template('rooms.html', rooms=rooms, user=user, roles=roles, hid=hid, newroom=newroomform, updateroom=updateroomform, deleteroom=deleteroomform)
+    return render_template('rooms.html', rooms=rooms, user=user, roles=roles, hid=hid, services=services, newroom=newroomform, updateroom=updateroomform, deleteroom=deleteroomform)

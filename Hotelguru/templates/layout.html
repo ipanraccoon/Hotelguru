@@ -18,7 +18,7 @@
         <ul style="list-style-type: none; display: flex; align-items: center; padding: 0; margin: 0;">
             <li style="margin-right: 20px;"><h1>Hotelguru</h1></li>
             <li style="margin-right: 15px;"><a href="/">Kezdőlap</a></li>
-            <li><a href="/account">Felhasználó</a></li>
+            {% if user %}<li><a href="/account">Felhasználó</a></li>{% endif %}
         </ul>
     </nav>
     {% if user %}

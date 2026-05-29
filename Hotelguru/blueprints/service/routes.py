@@ -4,7 +4,7 @@ from Hotelguru.blueprints.service.service import ServiceService
 from apiflask import HTTPError
 
 
-@bp.get('/hotel/<int:hotelid>')
+@bp.get('/services/<int:hotelid>')
 @bp.doc(tags=["service"])
 @bp.output(ServiceResponseSchema(many=True))
 def get_services_by_hotel(hotelid):
