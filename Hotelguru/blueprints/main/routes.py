@@ -5,6 +5,8 @@ from Hotelguru.Forms.loginForm import LoginForm
 from Hotelguru.Forms.newRoom import NewRoom
 from Hotelguru.Forms.updateRoom import UpdateRoom
 from Hotelguru.Forms.deleteRoom import DeleteRoom
+from Hotelguru.Forms.registerForm import RegisterForm
+
 
 def get_user_from_session():
     user = session.get('user')
@@ -23,9 +25,23 @@ def home():
     response = requests.get(api_url)
     hotels = response.json()
 
+    registerform=RegisterForm()
+    if registerform.validate_on_submit() and registerform.submit_register.data:
+        flash("Register requested for user {}".format(registerform.email.data))
+        response= requests.post(request.host_url + "register", json={
+            "name": registerform.name.data,
+            "phone": registerform.phone.data,
+            "email": registerform.email.data,
+            "password": registerform.password.data
+        })
+        if response.status_code == 200:
+            flash("Register successful")
+        else:
+            flash("Register failed")
+        return redirect("/")
 
     loginform=LoginForm()
-    if loginform.validate_on_submit():
+    if loginform.validate_on_submit() and loginform.submit_login.data:
         flash("Login requested for user {}".format(loginform.email.data))
         response= requests.post(request.host_url + "login", json={"email": loginform.email.data,"password": loginform.password.data})
         if response.status_code == 200:
@@ -36,7 +52,7 @@ def home():
         return redirect("/")
 
     user = get_user_from_session()
-    return render_template('main.html', hotels=hotels, login=loginform, user=user)
+    return render_template('main.html', hotels=hotels, login=loginform, user=user, register=registerform)
 
 @bp.route('/logout')
 def logout():
