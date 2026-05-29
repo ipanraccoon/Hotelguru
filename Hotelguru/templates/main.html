@@ -3,43 +3,7 @@
 {% block content %}
 
     {% if not user %}
-    <p>Regisztráció:</p>
-    <form action="" method="post" novalidate>
-        {{ register.hidden_tag() }}
-        <p>
-            {{ register.name.label}}<br />
-            {{ register.name(size = 32)}}<br /></p>
-            {% for error in register.name.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ register.phone.label}}<br />
-            {{ register.phone(size = 32)}}<br>
-            {% for error in register.phone.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ register.email.label}}<br />
-            {{ register.email(size = 32)}}<br />
-            {% for error in register.email.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ register.password.label}}<br />
-            {{ register.password(size=32)}}<br />
-            {% for error in register.password.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>   
-        </p>
-        <p>
-            {{ register.submit_register()}}
-        </p>
-
-    </form>
+    <a href="/reg">Regisztráció</a>
     <p>Belépés:</p>
     <form action="" method="post" novalidate>
         {{ login.hidden_tag() }}

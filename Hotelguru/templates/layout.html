@@ -13,8 +13,14 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-    <h1>Hotelguru</h1>
-    <a href="/">Kezdőlap</a>
+
+    <nav>
+        <ul style="list-style-type: none; display: flex; align-items: center; padding: 0; margin: 0;">
+            <li style="margin-right: 20px;"><h1>Hotelguru</h1></li>
+            <li style="margin-right: 15px;"><a href="/">Kezdőlap</a></li>
+            <li><a href="/account">Felhasználó</a></li>
+        </ul>
+    </nav>
     {% if user %}
     <p>Üdvözöljük, {{ user.name }}!</p>
     <a href="/logout">Kilépés</a>

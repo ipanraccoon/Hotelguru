@@ -6,6 +6,9 @@ from Hotelguru.Forms.newRoom import NewRoom
 from Hotelguru.Forms.updateRoom import UpdateRoom
 from Hotelguru.Forms.deleteRoom import DeleteRoom
 from Hotelguru.Forms.registerForm import RegisterForm
+from Hotelguru.Forms.updateUser import UpdateForm
+
+
 
 
 def get_user_from_session():
@@ -25,6 +28,22 @@ def home():
     response = requests.get(api_url)
     hotels = response.json()
 
+    loginform=LoginForm()
+    if loginform.validate_on_submit() and loginform.submit_login.data:
+        flash("Login requested for user {}".format(loginform.email.data))
+        response= requests.post(request.host_url + "login", json={"email": loginform.email.data,"password": loginform.password.data})
+        if response.status_code == 200:
+            flash("Login successful")
+            session['user'] = response.json()
+        else:
+            flash("Login failed")
+        return redirect("/")
+
+    user = get_user_from_session()
+    return render_template('main.html', hotels=hotels, login=loginform, user=user)
+
+@bp.route('/reg', methods=['GET', 'POST'])
+def register():
     registerform=RegisterForm()
     if registerform.validate_on_submit() and registerform.submit_register.data:
         flash("Register requested for user {}".format(registerform.email.data))
@@ -39,20 +58,25 @@ def home():
         else:
             flash("Register failed")
         return redirect("/")
+    return render_template('register.html', register=registerform)
 
-    loginform=LoginForm()
-    if loginform.validate_on_submit() and loginform.submit_login.data:
-        flash("Login requested for user {}".format(loginform.email.data))
-        response= requests.post(request.host_url + "login", json={"email": loginform.email.data,"password": loginform.password.data})
-        if response.status_code == 200:
-            flash("Login successful")
-            session['user'] = response.json()
-        else:
-            flash("Login failed")
-        return redirect("/")
-
+@bp.route('/account', methods=['GET', 'POST'])
+def account():
     user = get_user_from_session()
-    return render_template('main.html', hotels=hotels, login=loginform, user=user, register=registerform)
+    userdata = requests.get(request.host_url + "getuser",headers={'Authorization': f"Bearer {user['token']}"}).json()
+    updateform = UpdateForm()
+    if updateform.validate_on_submit() and updateform.submit.data:
+        response = requests.put(request.host_url + "updateuser", json={
+            "name": updateform.name.data,
+            "phone": updateform.phone.data,
+            "email": updateform.email.data
+        }, headers={'Authorization': f"Bearer {user['token']}"})
+        if response.status_code == 200:
+            flash("Update successful")
+        else:
+            flash("Update failed")
+        return redirect("/account")
+    return render_template('account.html', user=userdata, updateuser=updateform)
 
 @bp.route('/logout')
 def logout():

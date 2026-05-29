@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<p>
+    <h3>Felhasználó adatok:</h3><br>
+    Név: {{ user.name }}<br>
+    Email: {{ user.email }}<br>
+    Telefonszám: {{ user.phone }}<br
+</p>
+<p>
+    <h3>Adatok módosítása: </h3>
+    <form action="" method="post" novalidate>
+        {{ updateuser.hidden_tag() }}
+        <p>
+            {{ updateuser.name.label}}<br />
+            {{ updateuser.name(size = 32)}}<br />
+        </p>
+        <p>
+            {{ updateuser.phone.label}}<br />
+            {{ updateuser.phone(size = 32)}}<br />
+        </p>
+        <p>
+            {{ updateuser.email.label}}<br />
+            {{ updateuser.email(size = 32)}}<br />
+        </p>
+        <p>
+            {{ updateuser.submit()}}
+        </p>
+
+    </form>
+</p>
+{% endblock %}
