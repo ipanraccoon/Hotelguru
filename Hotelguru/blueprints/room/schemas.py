@@ -18,12 +18,15 @@ class RoomStatusSchema(Schema):
     name = fields.String()
 
 class RoomResponseSchema(Schema):
+    id = fields.Integer()
     number = fields.Integer()
     beds = fields.Integer()
     kitchen = fields.Boolean()
     price = fields.Integer()
     status = fields.Nested(RoomStatusSchema)
     hotel = fields.Nested(HotelResponseSchema)
+
+
 
 class RoomListSchema(Schema):
     id = fields.Integer()
