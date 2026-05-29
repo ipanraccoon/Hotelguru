@@ -21,3 +21,17 @@ def reservation_add(json_data):
     except Exception as ex:
         return {"ERROR": str(ex)}, 500
 
+@bp.put('/cancel/<int:reservation_id>')
+@bp.output(ReservationResponseSchema)
+def reservation_cancel(reservation_id):
+
+    success, response = (
+        ReservationService
+        .reservation_cancel(reservation_id)
+    )
+
+    if success:
+        return response, 200
+
+    return {"message": response}, 400
+

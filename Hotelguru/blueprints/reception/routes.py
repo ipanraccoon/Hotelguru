@@ -1,9 +1,12 @@
+from hmac import new
 from Hotelguru.blueprints.reception import bp
 from Hotelguru.blueprints.reception.service import ReceptionService
 from Hotelguru.blueprints.reception.schemas import AddServiceSchema, ReservationServiceResponseSchema
 from Hotelguru.blueprints.invoice.schemas import InvoiceSchema
 from Hotelguru.blueprints.reservation.schemas import ReservationResponseSchema
 from apiflask import HTTPError
+from Hotelguru.extensions import auth
+from Hotelguru.blueprints import role_required
 
 @bp.route('/')
 def index():
@@ -11,6 +14,8 @@ def index():
 
 @bp.put('/check_in/<int:reservationid>')
 @bp.doc(tags=["reception"])
+@bp.auth_required(auth)
+@role_required(["Recepcios"])
 #@bp.output(ReservationResponseSchema)
 def check_in(reservationid):
     try:
@@ -33,6 +38,8 @@ def add_service(reservationid, json_data):
 
 @bp.put('/check_out/<int:reservationid>')
 @bp.doc(tags=["reception"])
+@bp.auth_required(auth)
+@role_required(["Recepcios"])
 #@bp.output(InvoiceSchema)
 def check_out(reservationid):
     try:

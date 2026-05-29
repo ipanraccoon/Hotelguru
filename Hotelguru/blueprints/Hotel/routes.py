@@ -51,7 +51,7 @@ def hotel_delete(hid):
 
 @bp.post('/review/add')
 @bp.input(HotelReviewRequestSchema, location="json")
-@bp.output(HotelReviewResponseSchema)
+#@bp.output(HotelReviewResponseSchema)
 def add_review(json_data):
 
     success, response = (HotelService.add_review(json_data))

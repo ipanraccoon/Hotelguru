@@ -5,7 +5,9 @@ from turtle import st
 from flask import request_tearing_down
 from Hotelguru.extensions import db
 from Hotelguru.blueprints.Hotel.schemas import HotelResponseSchema, HotelRequestSchema, HotelReviewRequestSchema, HotelReviewResponseSchema
-from Hotelguru.models import Reservation, ReservationRoom, Room
+from Hotelguru.models.Reservation import Reservation
+from Hotelguru.models.ReservationRoom import ReservationRoom
+from Hotelguru.models.Room import Room
 from Hotelguru.models.Hotel import Hotel
 from Hotelguru.models.User import User
 from Hotelguru.models.HotelReview import HotelReview

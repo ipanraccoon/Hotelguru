@@ -49,3 +49,45 @@ class ReservationService:
             db.session.rollback()
             print(ex)
             return False, str(ex)
+
+    @staticmethod
+    def reservation_cancel(reservation_id):
+
+        try:
+
+            reservation = db.session.get(Reservation, reservation_id)
+
+            if not reservation:
+                return False, "Reservation not found"
+
+            if reservation.status == "Checked-In":
+                return False, (
+                "Checked in reservation "
+                "cannot be cancelled"
+            )
+
+            if reservation.status == "Checked-Out":
+                return False, (
+                "Checked out reservation "
+                "cannot be cancelled"
+            )
+
+            if reservation.status == "Cancelled":
+                return False, (
+                "Reservation already cancelled"
+            )
+
+            reservation.status = "Cancelled"
+
+            db.session.commit()
+
+            return True, (
+            ReservationResponseSchema()
+            .dump(reservation)
+        )
+
+        except Exception as ex:
+
+            db.session.rollback()
+
+            return False, str(ex)
