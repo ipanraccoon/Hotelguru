@@ -14,10 +14,10 @@
     {% endif %}
     {% endwith %}
     <h1>Hotelguru</h1>
-    <a href="/">Home</a>
+    <a href="/">Kezdőlap</a>
     {% if user %}
-    <p>Welcome, {{ user.name }}!</p>
-    <a href="/logout">Logout</a>
+    <p>Üdvözöljük, {{ user.name }}!</p>
+    <a href="/logout">Kilépés</a>
     {% endif %}
 
         {% block content %}{% endblock %}

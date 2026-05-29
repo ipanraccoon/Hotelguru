@@ -6,12 +6,20 @@ from Hotelguru.Forms.newRoom import NewRoom
 from Hotelguru.Forms.updateRoom import UpdateRoom
 from Hotelguru.Forms.deleteRoom import DeleteRoom
 
-
+def get_user_from_session():
+    user = session.get('user')
+    if not user:
+        return None
+    if(requests.get(request.host_url + "getuser",headers={'Authorization': f"Bearer {user['token']}"}).status_code == 200):
+        return user
+    else:
+        session.pop('user', None)
+        return None
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 def home():
-    api_url = request.host_url + "listhotels/"
+    api_url = request.host_url + "listhotels"
     response = requests.get(api_url)
     hotels = response.json()
 
@@ -27,7 +35,7 @@ def home():
             flash("Login failed")
         return redirect("/")
 
-    user = session.get('user')
+    user = get_user_from_session()
     return render_template('main.html', hotels=hotels, login=loginform, user=user)
 
 @bp.route('/logout')
@@ -42,13 +50,12 @@ def rooms(hid):
     response = requests.get(api_url)
     rooms = response.json()
     
-    user = session.get('user')
+    user = get_user_from_session()
     headers = {}
     if user and 'token' in user:
         headers['Authorization'] = f"Bearer {user['token']}"
-    
     roles = requests.get(request.host_url + "userroles", headers=headers).json()
-    print(roles)
+
 
     newroomform = NewRoom()
     if newroomform.validate_on_submit() and newroomform.submit_add.data:

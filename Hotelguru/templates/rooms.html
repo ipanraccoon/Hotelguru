@@ -4,14 +4,7 @@
 
 <table>
     {% for room in rooms %}
-    <tr><td>id: {{ room.id }}</td><td>Szobaszám: {{ room.number }}</td><td>Ágyak száma: {{ room.beds }}</td><td>Konyha: {{ room.kitchen }}</td><td>Ár egy éjszakára: {{ room.price }}</td><td>{{ room.status.name }}</td>
-    {% if 'Adminisztrátor' in roles | map(attribute='name') %}
-    <td>
-        <!-- nem jó -->
-        <a href="/deleteroom/{{room.id}}">Törlés</a>
-    </td>
-    {% endif %}
-    </tr>
+    <tr><td>id: {{ room.id }}</td><td>Szobaszám: {{ room.number }}</td><td>Ágyak száma: {{ room.beds }}</td><td>Konyha: {{ room.kitchen }}</td><td>Ár egy éjszakára: {{ room.price }}</td><td>{{ room.status.name }}</td></tr>
     {% endfor %}
 </table>
 {% if 'Adminisztrátor' in roles | map(attribute='name') %}

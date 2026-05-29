@@ -25,7 +25,7 @@
 <p>Hotelek:
 <table>
     {% for hotel in hotels %}
-    <tr><td>{{ hotel.name }}</td><td><a href="/rooms/{{hotel.id}}">Szobák</a></td></tr>
+    <tr><td>{{ hotel.name }}</td><td>Cím: {{ hotel.city }} {{ hotel.address }}</td><td>Értékelés: {{ hotel.rating }}</td><td><a href="/rooms/{{hotel.id}}">Szobák</a></td></tr>
     {% endfor %}
 </table></p>
 {% endblock %}
