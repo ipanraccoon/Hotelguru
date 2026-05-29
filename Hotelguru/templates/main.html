@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    {% if not user %}
+    <p>Belépés:</p>
+    <form action="" method="post" novalidate>
+        {{ login.hidden_tag() }}
+        <p>
+            {{ login.email.label}}<br />
+            {{ login.email(size = 32)}}<br />
+            {% for error in login.email.errors %}
+                <span style="color:red;">[{{error}}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ login.password.label}}<br />
+            {{ login.password(size=32)}}<br />
+        </p>
+        <p>
+            {{ login.submit()}}
+        </p>
+     </form>
+     {% endif %}
+<p>Hotelek:
+<table>
+    {% for hotel in hotels %}
+    <tr><td>{{ hotel.name }}</td><td><a href="/rooms/{{hotel.id}}">Szobák</a></td></tr>
+    {% endfor %}
+</table></p>
+{% endblock %}

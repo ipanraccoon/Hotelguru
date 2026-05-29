@@ -12,7 +12,10 @@ def create_app(config_class=Config):
 
     migrate = Migrate(app, db)
     
-    from Hotelguru.views import bp as main_bp
+    # from Hotelguru.views import bp as main_bp
+    # app.register_blueprint(main_bp)
+
+    from Hotelguru.blueprints.main import bp as main_bp
     app.register_blueprint(main_bp)
 
     from Hotelguru.blueprints.room import bp as room_bp

@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<table>
+    {% for room in rooms %}
+    <tr><td>{{ room.number }}</td><td>Ár: {{ room.price }}</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}
