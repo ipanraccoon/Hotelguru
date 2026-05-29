@@ -26,7 +26,93 @@
 <p>Hotelek:
 <table>
     {% for hotel in hotels %}
-    <tr><td>{{ hotel.name }}</td><td>Cím: {{ hotel.city }} {{ hotel.address }}</td><td>Értékelés: {{ hotel.rating }}</td><td><a href="/rooms/{{hotel.id}}">Szobák</a></td></tr>
+    <tr><td>id: {{ hotel.id }}</td><td>{{ hotel.name }}</td><td>Cím: {{ hotel.city }} {{ hotel.address }}</td><td>Értékelés: {{ hotel.rating }}</td><td><a href="/rooms/{{hotel.id}}">Szobák</a></td></tr>
     {% endfor %}
 </table></p>
+{% if 'Adminisztrátor' in roles | map(attribute='name') %}
+<p><table><tr><td><p><h2>Új hotel</h2>
+    <form action="" method="post" novalidate>
+        {{ newhotel.hidden_tag() }}
+        <p>
+            {{ newhotel.name.label}}<br />
+            {{ newhotel.name(size = 32)}}<br />
+            {% for error in newhotel.name.errors %}
+                <span style="color:red;">[{{error}}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ newhotel.city.label}}<br />
+            {{ newhotel.city(size = 32)}}<br />
+            {% for error in newhotel.city.errors %}
+                <span style="color:red;">[{{error}}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ newhotel.address.label}}<br />
+            {{ newhotel.address(size=32)}}<br />
+            {% for error in newhotel.address.errors %}
+                <span style="color:red;">[{{error}}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ newhotel.submit_add()}}
+        </p>
+    </form>
+</p></td>
+<!-- <td><p>
+    <h2>Hotel módosítása</h2>
+    <form action="" method="post" novalidate>
+        {{ updatehotel.hidden_tag() }}
+        <p>
+            {{ updatehotel.hotelid.label}}<br />
+            {{ updatehotel.hotelid(size = 32)}}<br />
+            {% for error in updatehotel.hotelid.errors %}
+                <span style="color:red;">[{{error}}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ updatehotel.name.label}}<br />
+            {{ updatehotel.name(size = 32)}}<br />
+            {% for error in updatehotel.name.errors %} 
+                <span style="color:red;">[{{error}}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ updatehotel.city.label}}<br />
+            {{ updatehotel.city(size=32)}}<br />
+            {% for error in updatehotel.city.errors %} 
+                <span style="color:red;">[{{error}}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ updatehotel.address.label}}<br />
+            {{ updatehotel.address(size=32)}}<br />
+            {% for error in updatehotel.address.errors %} 
+                <span style="color:red;">[{{error}}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ updatehotel.submit_update()}}
+        </p>
+    </form>
+</p></td> -->
+<td>
+<p>
+    <h2>Hotel törlése</h2>
+    <form action="" method="post" novalidate>
+        <p>
+            {{ deletehotel.hidden_tag() }}
+            {{ deletehotel.hotelid.label}}<br />
+            {{ deletehotel.hotelid(size = 32)}}
+            {% for error in deletehotel.hotelid.errors %}
+                <span style="color:red;">[{{error}}]</span>
+            {% endfor %}
+        </p>
+            <p>
+                {{ deletehotel.submit_delete()}}
+            </p>
+    </form>
+</p>
+</td></tr></table></p>
+{% endif %}
 {% endblock %}

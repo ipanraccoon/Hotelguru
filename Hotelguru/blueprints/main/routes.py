@@ -2,11 +2,11 @@ from flask import render_template, request, flash, redirect, session
 from Hotelguru.blueprints.main import bp
 import requests
 from Hotelguru.Forms.loginForm import LoginForm
-from Hotelguru.Forms.newRoom import NewRoom
-from Hotelguru.Forms.updateRoom import UpdateRoom
-from Hotelguru.Forms.deleteRoom import DeleteRoom
+from Hotelguru.Forms.roomForms import NewRoom, UpdateRoom, DeleteRoom
 from Hotelguru.Forms.registerForm import RegisterForm
 from Hotelguru.Forms.updateUser import UpdateForm
+from Hotelguru.Forms.hotelForms import NewHotel, UpdateHotel, DeleteHotel
+
 
 
 
@@ -38,9 +38,39 @@ def home():
         else:
             flash("Login failed")
         return redirect("/")
-
     user = get_user_from_session()
-    return render_template('main.html', hotels=hotels, login=loginform, user=user)
+    roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
+
+    newhotelform = NewHotel()
+    if newhotelform.validate_on_submit() and newhotelform.submit_add.data:
+        response = requests.post(request.host_url + "addhotel", json={
+            "name": newhotelform.name.data,
+            "city": newhotelform.city.data,
+            "address": newhotelform.address.data
+        }, headers={'Authorization': f"Bearer {user['token']}"})
+        if response.status_code == 200:
+            flash("Hotel added successfully")
+        else:
+            flash("Hotel add failed")
+        return redirect("/")
+    
+    updatehotelform=UpdateHotel()
+    if updatehotelform.validate_on_submit() and updatehotelform.submit_update.data:
+        pass
+
+    
+    deletehotelform=DeleteHotel()
+    if deletehotelform.validate_on_submit() and deletehotelform.submit_delete.data:
+        response = requests.put(request.host_url + "deletehotel/" + str(deletehotelform.hotelid.data), headers={'Authorization': f"Bearer {user['token']}"})
+        if response.status_code == 200:
+            flash("Hotel deleted successfully")
+        else:
+            flash("Hotel delete failed")
+        return redirect("/")
+
+
+
+    return render_template('main.html', hotels=hotels, login=loginform, user=user,roles=roles, newhotel=newhotelform, updatehotel=updatehotelform, deletehotel=deletehotelform)
 
 @bp.route('/reg', methods=['GET', 'POST'])
 def register():
@@ -91,10 +121,7 @@ def rooms(hid):
     rooms = response.json()
     
     user = get_user_from_session()
-    headers = {}
-    if user and 'token' in user:
-        headers['Authorization'] = f"Bearer {user['token']}"
-    roles = requests.get(request.host_url + "userroles", headers=headers).json()
+    roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
 
 
     newroomform = NewRoom()

@@ -10,3 +10,14 @@ class UpdateRoom(FlaskForm):
     price = IntegerField('Ár egy éjszakára', validators=[DataRequired()])
     roomid = IntegerField('Szoba id', validators=[DataRequired()])
     submit_update = SubmitField("Szoba módosítás")
+
+class NewRoom(FlaskForm): 
+    number = StringField('Szobaszám', validators=[DataRequired()])
+    beds = IntegerField('Ágyak száma', validators=[DataRequired()])
+    kitchen = BooleanField('Konyha')
+    price = IntegerField('Ár egy éjszakára', validators=[DataRequired()])
+    submit_add = SubmitField("Szoba hozzádás")
+
+class DeleteRoom(FlaskForm): 
+    roomid = IntegerField('Szoba id', validators=[DataRequired()])
+    submit_delete = SubmitField("Szoba törlés")
