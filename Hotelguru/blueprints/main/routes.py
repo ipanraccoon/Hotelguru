@@ -1,4 +1,4 @@
-from flask import render_template, request, flash, redirect, session
+from flask import render_template, request, flash, redirect, session, url_for
 from Hotelguru.blueprints.main import bp
 import requests
 from Hotelguru.Forms.loginForm import LoginForm
@@ -6,8 +6,7 @@ from Hotelguru.Forms.roomForms import NewRoom, UpdateRoom, DeleteRoom
 from Hotelguru.Forms.registerForm import RegisterForm
 from Hotelguru.Forms.updateUser import UpdateForm
 from Hotelguru.Forms.hotelForms import NewHotel, UpdateHotel, DeleteHotel
-
-
+from Hotelguru.Forms.searchForm import SearchForm
 
 
 
@@ -21,27 +20,42 @@ def get_user_from_session():
         session.pop('user', None)
         return None
 
+
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 def home():
-    api_url = request.host_url + "listhotels"
+    city_filter = request.args.get('city')
+    if city_filter:
+        api_url = request.host_url + "listhotels/" + city_filter
+    else:
+        api_url = request.host_url + "listhotels"
+
     response = requests.get(api_url)
     hotels = response.json()
 
     loginform=LoginForm()
     if loginform.validate_on_submit() and loginform.submit_login.data:
-        flash("Login requested for user {}".format(loginform.email.data))
-        response= requests.post(request.host_url + "login", json={"email": loginform.email.data,"password": loginform.password.data})
+        response = requests.post(request.host_url + "login", json={"email": loginform.email.data, "password": loginform.password.data})
         if response.status_code == 200:
             flash("Login successful")
             session['user'] = response.json()
         else:
             flash("Login failed")
         return redirect("/")
+    
     user = get_user_from_session()
     roles = []
     if user:
         roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
+
+    if user:
+        headers = {'Authorization': f"Bearer {user['token']}"}
+    else:
+        headers = {}
+
+    searchform = SearchForm()
+    if searchform.validate_on_submit() and searchform.submit_search.data:
+        return redirect(url_for('main.home', city=searchform.city.data))
 
     newhotelform = NewHotel()
     if newhotelform.validate_on_submit() and newhotelform.submit_add.data:
@@ -49,21 +63,20 @@ def home():
             "name": newhotelform.name.data,
             "city": newhotelform.city.data,
             "address": newhotelform.address.data
-        }, headers={'Authorization': f"Bearer {user['token']}"})
+        }, headers=headers)
         if response.status_code == 200:
             flash("Hotel added successfully")
         else:
             flash("Hotel add failed")
         return redirect("/")
     
-    updatehotelform=UpdateHotel()
+    updatehotelform = UpdateHotel()
     if updatehotelform.validate_on_submit() and updatehotelform.submit_update.data:
         pass
 
-    
-    deletehotelform=DeleteHotel()
+    deletehotelform = DeleteHotel()
     if deletehotelform.validate_on_submit() and deletehotelform.submit_delete.data:
-        response = requests.put(request.host_url + "deletehotel/" + str(deletehotelform.hotelid.data), headers={'Authorization': f"Bearer {user['token']}"})
+        response = requests.put(request.host_url + "deletehotel/" + str(deletehotelform.hotelid.data), headers=headers)
         if response.status_code == 200:
             flash("Hotel deleted successfully")
         else:
@@ -72,7 +85,11 @@ def home():
 
 
 
-    return render_template('main.html', hotels=hotels, login=loginform, user=user,roles=roles, newhotel=newhotelform, updatehotel=updatehotelform, deletehotel=deletehotelform)
+    return render_template(
+        'main.html', 
+        hotels=hotels, login=loginform, user=user,roles=roles, 
+        newhotel=newhotelform, updatehotel=updatehotelform, 
+        deletehotel=deletehotelform, search=searchform)
 
 @bp.route('/reg', methods=['GET', 'POST'])
 def register():
@@ -116,6 +133,7 @@ def logout():
     flash("You have been logged out.")
     return redirect("/")
 
+
 @bp.route('/rooms/<hid>', methods=['GET', 'POST', 'PUT'])
 def rooms(hid):
     api_url = request.host_url + "listrooms/" + hid
@@ -123,11 +141,14 @@ def rooms(hid):
     rooms = response.json()
     
     user = get_user_from_session()
-    roles=[]
+    roles = []
     if user:
         roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
-    services = requests.get(request.host_url + "services/"+hid).json()
-    print(request.host_url)
+        headers = {'Authorization': f"Bearer {user['token']}"}
+    else:
+        headers = {}
+        
+    services = requests.get(request.host_url + "services/" + hid).json()
 
     newroomform = NewRoom()
     if newroomform.validate_on_submit() and newroomform.submit_add.data:
@@ -145,7 +166,7 @@ def rooms(hid):
             flash("Room add failed")
         return redirect(f"/rooms/{hid}")
 
-    updateroomform=UpdateRoom()
+    updateroomform = UpdateRoom()
     if updateroomform.validate_on_submit() and updateroomform.submit_update.data:
         response = requests.put(request.host_url + "updateroom/" + str(updateroomform.roomid.data), json={
             "number": updateroomform.number.data,
@@ -161,7 +182,7 @@ def rooms(hid):
             flash("Room update failed")
         return redirect(f"/rooms/{hid}")
 
-    deleteroomform=DeleteRoom()
+    deleteroomform = DeleteRoom()
     if deleteroomform.validate_on_submit() and deleteroomform.submit_delete.data:
         response = requests.put(request.host_url + "deleteroom/" + str(deleteroomform.roomid.data), headers=headers)
         if response.status_code == 200:
@@ -170,5 +191,9 @@ def rooms(hid):
             flash("Room delete failed")
         return redirect(f"/rooms/{hid}")
 
-
-    return render_template('rooms.html', rooms=rooms, user=user, roles=roles, hid=hid, services=services, newroom=newroomform, updateroom=updateroomform, deleteroom=deleteroomform)
+    return render_template(
+        'rooms.html', 
+        rooms=rooms, user=user, roles=roles, hid=hid, 
+        services=services, newroom=newroomform, 
+        updateroom=updateroomform, deleteroom=deleteroomform
+    )

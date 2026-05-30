@@ -1,112 +1,128 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h4>Szobák:</h4>
-<table>
-    {% for room in rooms %}
-    <tr><td>id: {{ room.id }}</td><td>Szobaszám: {{ room.number }}</td><td>Ágyak száma: {{ room.beds }}</td><td>Konyha: {{ room.kitchen }}</td><td>Ár egy éjszakára: {{ room.price }}</td><td>{{ room.status.name }}</td></tr>
-    {% endfor %}
-</table>
-{% if 'Adminisztrátor' in roles | map(attribute='name') %}
-<p><table><tr><td><p><h2>Új szoba</h2>
-    <form action="" method="post" novalidate>
-        {{ newroom.hidden_tag() }}
-        <p>
-            {{ newroom.number.label}}<br />
-            {{ newroom.number(size = 32)}}<br />
-            {% for error in newroom.number.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ newroom.beds.label}}<br />
-            {{ newroom.beds(size=32)}}<br />
-            {% for error in newroom.beds.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ newroom.kitchen.label}}<br />
-            {{ newroom.kitchen(size=32)}}<br />
-        </p>
-        <p>
-            {{ newroom.price.label}}<br />
-            {{ newroom.price(size=32)}}<br />
-            {% for error in newroom.price.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ newroom.submit_add()}}
-        </p>
-    </form>
-</p></td>
-<td><p>
-    <h2>Szoba módosítása</h2>
-    <form action="" method="post" novalidate>
-        {{ updateroom.hidden_tag() }}
-        <p>
-            {{ updateroom.roomid.label}}<br />
-            {{ updateroom.roomid(size = 32)}}<br />
-            {% for error in updateroom.roomid.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ updateroom.number.label}}<br />
-            {{ updateroom.number(size = 32)}}<br />
-            {% for error in updateroom.number.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ updateroom.beds.label}}<br />
-            {{ updateroom.beds(size=32)}}<br />
-            {% for error in updateroom.beds.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ updateroom.kitchen.label}}<br />
-            {{ updateroom.kitchen(size=32)}}<br />
-        </p>
-        <p>
-            {{ updateroom.price.label}}<br />
-            {{ updateroom.price(size=32)}}<br />
-            {% for error in updateroom.price.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ updateroom.submit_update()}}
-        </p>
-    </form>
-</p></td>
-<td>
-<p>
-    <h2>Szoba törlése</h2>
-    <form action="" method="post" novalidate>
-        {{ deleteroom.hidden_tag() }}
-        <p>
-            {{ deleteroom.roomid.label}}<br />
-            {{ deleteroom.roomid(size = 32)}}<br /> 
-            {% for error in deleteroom.roomid.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ deleteroom.submit_delete()}}
-        </p>
-    </form>
-</p>
-</td></tr></table></p>
-{% endif %}
-<p>
+    <h4>Szobák:</h4>
+    <table>
+        {% for room in rooms %}
+            <tr>
+                <td>id: {{ room.id }}</td>
+                <td>Szobaszám: {{ room.number }}</td>
+                <td>Ágyak száma: {{ room.beds }}</td>
+                <td>Konyha: {{ room.kitchen }}</td>
+                <td>Ár egy éjszakára: {{ room.price }}</td>
+                <td>{{ room.status.name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {# Adminisztrátori műveletek #}
+    {% if 'Adminisztrátor' in roles | map(attribute='name') %}
+        <div style="margin-top: 20px;">
+            <table>
+                <tr>
+                    {# Új szoba hozzáadása #}
+                    <td style="vertical-align: top; padding-right: 30px;">
+                        <h2>Új szoba</h2>
+                        <form action="" method="post" novalidate>
+                            {{ newroom.hidden_tag() }}
+                            <p>
+                                {{ newroom.number.label }}<br />
+                                {{ newroom.number(size=32) }}<br />
+                                {% for error in newroom.number.errors %}
+                                    <span style="color:red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </p>
+                            <p>
+                                {{ newroom.beds.label }}<br />
+                                {{ newroom.beds(size=32) }}<br />
+                                {% for error in newroom.beds.errors %}
+                                    <span style="color:red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </p>
+                            <p>
+                                {{ newroom.kitchen.label }}<br />
+                                {{ newroom.kitchen(size=32) }}<br />
+                            </p>
+                            <p>
+                                {{ newroom.price.label }}<br />
+                                {{ newroom.price(size=32) }}<br />
+                                {% for error in newroom.price.errors %}
+                                    <span style="color:red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </p>
+                            <p>{{ newroom.submit_add() }}</p>
+                        </form>
+                    </td>
+
+                    {# Szoba módosítása #}
+                    <td style="vertical-align: top; padding-right: 30px;">
+                        <h2>Szoba módosítása</h2>
+                        <form action="" method="post" novalidate>
+                            {{ updateroom.hidden_tag() }}
+                            <p>
+                                {{ updateroom.roomid.label }}<br />
+                                {{ updateroom.roomid(size=32) }}<br />
+                                {% for error in updateroom.roomid.errors %}
+                                    <span style="color:red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </p>
+                            <p>
+                                {{ updateroom.number.label }}<br />
+                                {{ updateroom.number(size=32) }}<br />
+                                {% for error in updateroom.number.errors %}
+                                    <span style="color:red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </p>
+                            <p>
+                                {{ updateroom.beds.label }}<br />
+                                {{ updateroom.beds(size=32) }}<br />
+                                {% for error in updateroom.beds.errors %}
+                                    <span style="color:red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </p>
+                            <p>
+                                {{ updateroom.kitchen.label }}<br />
+                                {{ updateroom.kitchen(size=32) }}<br />
+                            </p>
+                            <p>
+                                {{ updateroom.price.label }}<br />
+                                {{ updateroom.price(size=32) }}<br />
+                                {% for error in updateroom.price.errors %}
+                                    <span style="color:red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </p>
+                            <p>{{ updateroom.submit_update() }}</p>
+                        </form>
+                    </td>
+
+                    {# Szoba törlése #}
+                    <td style="vertical-align: top;">
+                        <h2>Szoba törlése</h2>
+                        <form action="" method="post" novalidate>
+                            {{ deleteroom.hidden_tag() }}
+                            <p>
+                                {{ deleteroom.roomid.label }}<br />
+                                {{ deleteroom.roomid(size=32) }}<br />
+                                {% for error in deleteroom.roomid.errors %}
+                                    <span style="color:red;">[{{ error }}]</span>
+                                {% endfor %}
+                            </p>
+                            <p>{{ deleteroom.submit_delete() }}</p>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    {% endif %}
+
     <h4>Szolgáltatások:</h4>
     <table>
         {% for service in services %}
-        <tr><td>id: {{ service.id }}</td><td>Név: {{ service.name }}</td><td>Ár: {{ service.price }}</td></tr>
+            <tr>
+                <td>id: {{ service.id }}</td>
+                <td>Név: {{ service.name }}</td>
+                <td>Ár: {{ service.price }}</td>
+            </tr>
         {% endfor %}
     </table>
-</p>
 {% endblock %}

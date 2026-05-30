@@ -1,40 +1,45 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <p>Regisztráció:</p>
+    <h2>Regisztráció:</h2>
+
     <form action="" method="post" novalidate>
         {{ register.hidden_tag() }}
+
         <p>
-            {{ register.name.label}}<br />
-            {{ register.name(size = 32)}}<br /></p>
+            {{ register.name.label }}<br />
+            {{ register.name(size=32) }}<br />
             {% for error in register.name.errors %}
-                <span style="color:red;">[{{error}}]</span>
+                <span style="color:red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+
         <p>
-            {{ register.phone.label}}<br />
-            {{ register.phone(size = 32)}}<br>
+            {{ register.phone.label }}<br />
+            {{ register.phone(size=32) }}<br />
             {% for error in register.phone.errors %}
-                <span style="color:red;">[{{error}}]</span>
+                <span style="color:red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+
         <p>
-            {{ register.email.label}}<br />
-            {{ register.email(size = 32)}}<br />
+            {{ register.email.label }}<br />
+            {{ register.email(size=32) }}<br />
             {% for error in register.email.errors %}
-                <span style="color:red;">[{{error}}]</span>
+                <span style="color:red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+
         <p>
-            {{ register.password.label}}<br />
-            {{ register.password(size=32)}}<br />
+            {{ register.password.label }}<br />
+            {{ register.password(size=32) }}<br />
             {% for error in register.password.errors %}
-                <span style="color:red;">[{{error}}]</span>
+                <span style="color:red;">[{{ error }}]</span>
             {% endfor %}
-        </p>   
         </p>
+
         <p>
-            {{ register.submit_register()}}
+            {{ register.submit_register() }}
         </p>
     </form>
 {% endblock %}
