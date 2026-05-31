@@ -51,6 +51,17 @@ def approve_reservation(reservationid):
     return {"message": response}, 400
 
 
+@bp.put('/reject/<int:reservationid>')
+@bp.doc(tags=["reception"])
+@bp.auth_required(auth)
+@role_required(["Recepciós"])
+def reject_reservation(reservationid):
+    success, response = ReceptionService.reject_reservation(reservationid)
+    if success:
+        return response, 200
+    return {"message": response}, 400
+
+
 @bp.post('/add_service/<int:reservationid>')
 @bp.doc(tags=["reception"])
 @bp.auth_required(auth)

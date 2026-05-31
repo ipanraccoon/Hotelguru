@@ -6,6 +6,7 @@ from Hotelguru.models.ReservationRoom import ReservationRoom
 from Hotelguru.models.Room import Room
 from Hotelguru.blueprints.reservation.schemas import dump_reservation
 from sqlalchemy import select, and_
+from Hotelguru.room_availability import is_room_bookable
 
 
 class ReservationService:
@@ -69,6 +70,10 @@ class ReservationService:
                     db.session.rollback()
                     return False, f"Room {room_id} not found"
 
+                if not is_room_bookable(room):
+                    db.session.rollback()
+                    return False, f"Room {room_id} is not available for booking"
+
                 if not ReservationService._room_is_available(room_id, start_date, end_date):
                     db.session.rollback()
                     return False, f"Room {room_id} is not available for the selected dates"
@@ -84,7 +89,7 @@ class ReservationService:
 
             db.session.commit()
 
-            return True, dump_reservation(resevation)
+            return True, dump_reservation(resevation, detailed=True)
 
         except Exception as ex:
             db.session.rollback()
@@ -96,7 +101,7 @@ class ReservationService:
         reservations = db.session.execute(
             select(Reservation).filter_by(user_id=user_id).order_by(Reservation.id.desc())
         ).scalars().all()
-        return True, dump_reservation(reservations, many=True)
+        return True, dump_reservation(reservations, many=True, detailed=True)
 
     @staticmethod
     def get_reservation(reservation_id, user_id, roles=None):
@@ -107,7 +112,7 @@ class ReservationService:
             return False, "Reservation not found"
         if reservation.user_id != user_id and "Adminisztrátor" not in roles and "Recepciós" not in roles:
             return False, "Access denied"
-        return True, dump_reservation(reservation)
+        return True, dump_reservation(reservation, detailed=True)
 
     @staticmethod
     def reservation_cancel(reservation_id, user_id=None):
@@ -155,4 +160,36 @@ class ReservationService:
 
             db.session.rollback()
 
+            return False, str(ex)
+
+    @staticmethod
+    def add_service(reservation_id, data, user_id):
+        try:
+            reservation = db.session.get(Reservation, reservation_id)
+            if not reservation:
+                return False, "Reservation not found"
+            if reservation.user_id != user_id:
+                return False, "Access denied"
+            if reservation.status != "Checked-In":
+                return False, "Services can only be added to checked-in reservations"
+
+            from Hotelguru.models.Service import Service
+            from Hotelguru.models.ReservationService import ReservationService as ReservationServiceModel
+            from Hotelguru.blueprints.reception.schemas import ReservationServiceResponseSchema
+
+            service = db.session.get(Service, data["service_id"])
+            if not service:
+                return False, "Service not found"
+
+            quantity = data.get("quantity", 1)
+            res_service = ReservationServiceModel(
+                reservation_id=reservation_id,
+                service_id=data["service_id"],
+                quantity=quantity,
+            )
+            db.session.add(res_service)
+            db.session.commit()
+            return True, ReservationServiceResponseSchema().dump(res_service)
+        except Exception as ex:
+            db.session.rollback()
             return False, str(ex)

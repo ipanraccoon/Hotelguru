@@ -32,6 +32,9 @@ class UserUpdateSchema(Schema):
     phone = String(validate=Length(max=30))
     address = String(validate=Length(max=100))
 
+class AssignRoleSchema(Schema):
+    role_id = Integer(required=True)
+
 class PayloadSchema(Schema):
     user_id = Integer()
     roles  = List(Nested(RoleSchema))

@@ -6,6 +6,7 @@ from Hotelguru.models.ReservationRoom import ReservationRoom
 from Hotelguru.models.RoomStatus import RoomStatus
 from Hotelguru.models.Hotel import Hotel
 from Hotelguru.models.Room import Room
+from Hotelguru.room_availability import is_room_bookable
 from sqlalchemy import Select, select, and_
 
 class RoomService:
@@ -96,6 +97,7 @@ class RoomService:
         rooms = db.session.execute(
             select(Room).where(~Room.id.in_(reserved_rooms))
             ).scalars().all()
+        rooms = [room for room in rooms if is_room_bookable(room)]
 
         return True, RoomListSchema().dump(rooms, many=True)
 
@@ -124,6 +126,7 @@ class RoomService:
             .where(Hotel.city == city)
             .where(~Room.id.in_(reserved_rooms))
         ).scalars().all()
+        rooms = [room for room in rooms if is_room_bookable(room)]
 
         return True, RoomListSchema().dump(rooms, many=True)
 

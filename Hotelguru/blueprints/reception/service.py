@@ -124,6 +124,24 @@ class ReceptionService:
 
 
     @staticmethod
+    def reject_reservation(reservation_id):
+        try:
+            reservation = db.session.execute(
+                db.select(Reservation).filter_by(id=reservation_id)
+            ).scalar_one_or_none()
+            if not reservation:
+                return False, "Reservation not found"
+            if reservation.status != "Pending":
+                return False, "Only pending reservations can be rejected"
+            reservation.status = "Cancelled"
+            db.session.commit()
+            return True, dump_reservation(reservation)
+        except Exception as e:
+            db.session.rollback()
+            return False, f"Something went wrong: {str(e)}"
+
+
+    @staticmethod
     def check_out(reservation_id, issued_by=None):
         reservation = db.session.execute(db.select(Reservation).filter_by(id=reservation_id)).scalar_one_or_none()
         if not reservation:

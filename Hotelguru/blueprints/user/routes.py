@@ -2,7 +2,7 @@ import json
 from Hotelguru.blueprints.user import bp
 from Hotelguru.blueprints import role_required
 from urllib import response
-from Hotelguru.blueprints.user.schemas import UserSchema, RoleSchema, LoginSchema, RegisterSchema, UserUpdateSchema
+from Hotelguru.blueprints.user.schemas import UserSchema, RoleSchema, LoginSchema, RegisterSchema, UserUpdateSchema, AssignRoleSchema
 from Hotelguru.blueprints.user.service import UserService
 from apiflask import HTTPError
 from apiflask.fields import String, Integer
@@ -52,6 +52,19 @@ def get_user_roles():
     if success:
         return response, 200
     return {"message": response}, 400
+
+@bp.put('/assignrole/<int:userid>')
+@bp.doc(tags=["user"])
+@bp.input(AssignRoleSchema, location="json")
+@bp.output(RoleSchema(many=True))
+@bp.auth_required(auth)
+@role_required(["Adminisztrátor"])
+def assign_role(userid, json_data):
+    success, response = UserService.assign_role(userid, json_data["role_id"])
+    if success:
+        return response, 200
+    return {"message": response}, 400
+
 
 @bp.get('/<int:userid>')
 @bp.doc(tags=["user"])
