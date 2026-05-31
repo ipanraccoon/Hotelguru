@@ -3,7 +3,7 @@ import traceback
 from sre_constants import SUCCESS
 from urllib import response
 from Hotelguru.blueprints.room import bp
-from Hotelguru.blueprints.room.schemas import RoomRequestSchema, RoomResponseSchema, RoomStatusSchema, RoomListSchema, RoomAvalibleDateSchema
+from Hotelguru.blueprints.room.schemas import RoomRequestSchema, RoomResponseSchema, RoomStatusSchema, RoomListSchema, RoomAvalibleDateSchema, RoomStatusUpdateSchema
 from Hotelguru.blueprints.room.service import RoomService
 from apiflask.fields import String, Integer
 from apiflask import HTTPError
@@ -58,6 +58,17 @@ def room_update(rid, json_data):
 @role_required(["Adminisztrátor"])
 def room_delete(rid):
     success, response = RoomService.room_delete(rid)
+    if success:
+        return response, 200
+    return {"message": response}, 400
+
+@bp.put('/roomstatus/<int:rid>')
+@bp.input(RoomStatusUpdateSchema, location="json")
+@bp.output(RoomResponseSchema)
+@bp.auth_required(auth)
+@role_required(["Adminisztrátor"])
+def room_update_status(rid, json_data):
+    success, response = RoomService.room_update_status(rid, json_data["status_id"])
     if success:
         return response, 200
     return {"message": response}, 400

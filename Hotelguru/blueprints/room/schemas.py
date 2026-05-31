@@ -17,6 +17,9 @@ class RoomStatusSchema(Schema):
     id = fields.Integer()
     name = fields.String()
 
+class RoomStatusUpdateSchema(Schema):
+    status_id = fields.Integer(required=True)
+
 class RoomResponseSchema(Schema):
     id = fields.Integer()
     number = fields.Integer()

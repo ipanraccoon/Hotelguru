@@ -13,6 +13,7 @@ class UserSchema(Schema):
     name = String()
     email = String()
     phone = String()
+    address = String()
     token = String()
 
 class RoleSchema(Schema):
@@ -29,6 +30,7 @@ class UserUpdateSchema(Schema):
     name = String(validate=Length(max=30))
     email = String(validate=Email())
     phone = String(validate=Length(max=30))
+    address = String(validate=Length(max=100))
 
 class PayloadSchema(Schema):
     user_id = Integer()

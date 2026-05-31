@@ -128,5 +128,21 @@ class RoomService:
         return True, RoomListSchema().dump(rooms, many=True)
 
     @staticmethod
+    def room_update_status(room_id, status_id):
+        try:
+            room = db.session.get(Room, room_id)
+            if not room:
+                return False, "Room not found"
+            status = db.session.get(RoomStatus, status_id)
+            if not status:
+                return False, "Invalid statusID"
+            room.status_id = status_id
+            db.session.commit()
+            return True, RoomResponseSchema().dump(room)
+        except Exception:
+            db.session.rollback()
+            return False, "room_update_status() error"
+
+    @staticmethod
     def room_list_avalible(city, start_date, end_date):
         return RoomService.room_list_available(city, start_date, end_date)

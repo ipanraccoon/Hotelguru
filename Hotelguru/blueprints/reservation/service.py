@@ -1,13 +1,24 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from flask import current_app
 from Hotelguru.extensions import db
 from Hotelguru.models.Reservation import Reservation
 from Hotelguru.models.ReservationRoom import ReservationRoom
 from Hotelguru.models.Room import Room
-from Hotelguru.blueprints.Reservation.schemas import ReservationResponseSchema, dump_reservation
+from Hotelguru.blueprints.reservation.schemas import dump_reservation
 from sqlalchemy import select, and_
 
 
 class ReservationService:
+
+    @staticmethod
+    def _as_date(value):
+        if isinstance(value, date) and not isinstance(value, datetime):
+            return value
+        if isinstance(value, datetime):
+            return value.date()
+        if isinstance(value, str):
+            return date.fromisoformat(value[:10])
+        return value
 
     @staticmethod
     def _room_is_available(room_id, start_date, end_date):
@@ -127,6 +138,12 @@ class ReservationService:
                 return False, (
                 "Reservation already cancelled"
             )
+
+            start_date = ReservationService._as_date(reservation.reserved_start_date)
+            deadline_days = current_app.config.get("CANCELLATION_DEADLINE_DAYS", 2)
+            last_cancel_date = start_date - timedelta(days=deadline_days)
+            if date.today() > last_cancel_date:
+                return False, "Cancellation deadline has passed"
 
             reservation.status = "Cancelled"
 

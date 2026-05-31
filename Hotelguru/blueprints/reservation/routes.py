@@ -1,6 +1,6 @@
-from Hotelguru.blueprints.Reservation import bp
-from Hotelguru.blueprints.Reservation.schemas import ReservationRequestSchema, ReservationResponseSchema
-from Hotelguru.blueprints.Reservation.service import ReservationService
+from Hotelguru.blueprints.reservation import bp
+from Hotelguru.blueprints.reservation.schemas import ReservationRequestSchema, ReservationResponseSchema
+from Hotelguru.blueprints.reservation.service import ReservationService
 from Hotelguru.extensions import auth
 from Hotelguru.blueprints import role_required
 
@@ -59,4 +59,3 @@ def reservation_cancel(reservation_id):
         return response, 200
 
     return {"message": response}, 400
-

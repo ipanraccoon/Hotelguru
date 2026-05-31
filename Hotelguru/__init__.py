@@ -33,7 +33,7 @@ def create_app(config_class=Config):
     from Hotelguru.blueprints.service import bp as bp_service
     app.register_blueprint(bp_service)
 
-    from Hotelguru.blueprints.Reservation import bp as bp_reservation
+    from Hotelguru.blueprints.reservation import bp as bp_reservation
     app.register_blueprint(bp_reservation)
 
     from Hotelguru.blueprints.invoice import bp as bp_invoice
