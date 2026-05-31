@@ -65,6 +65,17 @@ def assign_role(userid, json_data):
         return response, 200
     return {"message": response}, 400
 
+@bp.put('/removerole/<int:userid>')
+@bp.doc(tags=["user"])
+@bp.input(AssignRoleSchema, location="json")
+@bp.output(RoleSchema(many=True))
+@bp.auth_required(auth)
+@role_required(["Adminisztrátor"])
+def remove_role(userid, json_data):
+    success, response = UserService.remove_role(userid, json_data["role_id"])
+    if success:
+        return response, 200
+    return {"message": response}, 400
 
 @bp.get('/<int:userid>')
 @bp.doc(tags=["user"])
