@@ -7,9 +7,10 @@ from Hotelguru.models.Service import Service
 from Hotelguru.models.ReservationService import ReservationService
 from Hotelguru.extensions import db
 from Hotelguru.blueprints.invoice.schemas import InvoiceSchema
-from Hotelguru.blueprints.Reservation.schemas import ReservationResponseSchema
+from Hotelguru.blueprints.Reservation.schemas import ReservationResponseSchema, dump_reservation, _format_date
 from Hotelguru.blueprints.reception.schemas import ReservationServiceResponseSchema
 from datetime import date, datetime
+from sqlalchemy import text
 from Hotelguru.extensions import auth
 
 
@@ -33,12 +34,15 @@ class ReceptionService:
             if reservation.status == "Checked-In":
                 return False, "Guest is already checked in."
 
+            if reservation.status != "Approved":
+                return False, "Reservation must be approved before check-in."
+
             if _as_date(reservation.reserved_start_date) > date.today():
                 return False, "Too early check in."
             
             reservation.status = "Checked-In"
             db.session.commit()
-            return True, ReservationResponseSchema().dump(reservation)
+            return True, dump_reservation(reservation)
         except Exception as e:
             db.session.rollback()
             return False, f"Something went wrong: {str(e)}"
@@ -69,6 +73,51 @@ class ReceptionService:
             db.session.add(res_service)
             db.session.commit()
             return True, ReservationServiceResponseSchema().dump(res_service)
+        except Exception as e:
+            db.session.rollback()
+            return False, f"Something went wrong: {str(e)}"
+
+
+    @staticmethod
+    def approve_reservation(reservation_id, approved_by):
+        try:
+            reservation = db.session.execute(
+                db.select(Reservation).filter_by(id=reservation_id)
+            ).scalar_one_or_none()
+            if not reservation:
+                return False, "Reservation not found"
+            if reservation.status == "Cancelled":
+                return False, "Cannot approve a cancelled reservation"
+            if reservation.status != "Pending":
+                return False, "Only pending reservations can be approved"
+            reservation.status = "Approved"
+            reservation.approved_by = approved_by
+            db.session.commit()
+            return True, dump_reservation(reservation)
+        except Exception as e:
+            db.session.rollback()
+            return False, f"Something went wrong: {str(e)}"
+
+
+    @staticmethod
+    def get_pending_reservations():
+        try:
+            rows = db.session.execute(
+                text(
+                    "SELECT id, user_id, reserved_start_date, reserved_end_date, status "
+                    "FROM reservations WHERE status = 'Pending' ORDER BY id DESC"
+                )
+            ).mappings().all()
+            return True, [
+                {
+                    "id": row["id"],
+                    "user_id": row["user_id"],
+                    "reserved_start_date": _format_date(row["reserved_start_date"]),
+                    "reserved_end_date": _format_date(row["reserved_end_date"]),
+                    "status": row["status"],
+                }
+                for row in rows
+            ]
         except Exception as e:
             db.session.rollback()
             return False, f"Something went wrong: {str(e)}"

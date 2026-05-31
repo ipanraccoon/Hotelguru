@@ -1,8 +1,30 @@
-from datetime import datetime
+from datetime import datetime, date
 from apiflask import Schema, fields
 from apiflask.fields import Integer, String, List, Nested, Boolean, Date, DateTime
 from Hotelguru.blueprints.invoice.schemas import InvoiceSchema
 from Hotelguru.blueprints.reception.schemas import ReservationServiceResponseSchema
+
+
+def _format_date(value):
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.date().isoformat()
+    if isinstance(value, date):
+        return value.isoformat()
+    if isinstance(value, str):
+        return value[:10]
+    return str(value)
+
+
+def _reservation_to_dict(reservation):
+    return {
+        "id": reservation.id,
+        "user_id": reservation.user_id,
+        "reserved_start_date": _format_date(reservation.reserved_start_date),
+        "reserved_end_date": _format_date(reservation.reserved_end_date),
+        "status": reservation.status,
+    }
 
 
 class ReservationRequestSchema(Schema):
@@ -15,13 +37,16 @@ class ReservationRequestSchema(Schema):
 
 class ReservationResponseSchema(Schema):
     id = Integer()
-
     user_id = Integer()
-
-    reserved_start_date = Date()
-    reserved_end_date = Date()
-
+    reserved_start_date = String()
+    reserved_end_date = String()
     status = String()
+
+
+def dump_reservation(obj, many=False):
+    if many:
+        return [_reservation_to_dict(item) for item in obj]
+    return _reservation_to_dict(obj)
 
 
 

@@ -2,13 +2,20 @@ from Hotelguru.blueprints.Reservation import bp
 from Hotelguru.blueprints.Reservation.schemas import ReservationRequestSchema, ReservationResponseSchema
 from Hotelguru.blueprints.Reservation.service import ReservationService
 from Hotelguru.extensions import auth
+from Hotelguru.blueprints import role_required
 
 
 @bp.post('/add')
 @bp.input(ReservationRequestSchema, location="json")
+@bp.auth_required(auth)
+@role_required(["Vendég", "Adminisztrátor"])
 def reservation_add(json_data):
     try:
-        success, response = ReservationService.reservation_add(json_data)
+        success, response = ReservationService.reservation_add(
+            json_data,
+            current_user_id=auth.current_user["user_id"],
+            current_user_roles=[r["name"] for r in auth.current_user.get("roles", [])],
+        )
         if success:
             return response, 200
         return {"message": response}, 400
@@ -21,6 +28,19 @@ def reservation_add(json_data):
 def reservation_mine():
     success, response = ReservationService.get_user_reservations(
         auth.current_user["user_id"]
+    )
+    if success:
+        return response, 200
+    return {"message": response}, 400
+
+
+@bp.get('/<int:reservation_id>')
+@bp.auth_required(auth)
+def reservation_get(reservation_id):
+    success, response = ReservationService.get_reservation(
+        reservation_id,
+        auth.current_user["user_id"],
+        [r["name"] for r in auth.current_user.get("roles", [])],
     )
     if success:
         return response, 200

@@ -26,8 +26,35 @@ def check_in(reservationid):
     except Exception as ex:
         return {"ERROR": str(ex)}, 500
 
+@bp.get('/reservations/pending')
+@bp.doc(tags=["reception"])
+@bp.auth_required(auth)
+@role_required(["Recepciós"])
+def pending_reservations():
+    success, response = ReceptionService.get_pending_reservations()
+    if success:
+        return response, 200
+    return {"message": response}, 400
+
+
+@bp.put('/approve/<int:reservationid>')
+@bp.doc(tags=["reception"])
+@bp.auth_required(auth)
+@role_required(["Recepciós"])
+def approve_reservation(reservationid):
+    success, response = ReceptionService.approve_reservation(
+        reservationid,
+        auth.current_user["user_id"],
+    )
+    if success:
+        return response, 200
+    return {"message": response}, 400
+
+
 @bp.post('/add_service/<int:reservationid>')
 @bp.doc(tags=["reception"])
+@bp.auth_required(auth)
+@role_required(["Recepciós"])
 @bp.input(AddServiceSchema)
 @bp.output(ReservationServiceResponseSchema)
 def add_service(reservationid, json_data):

@@ -3,7 +3,7 @@ from Hotelguru.extensions import db
 from Hotelguru.models.Reservation import Reservation
 from Hotelguru.models.ReservationRoom import ReservationRoom
 from Hotelguru.models.Room import Room
-from Hotelguru.blueprints.Reservation.schemas import ReservationResponseSchema
+from Hotelguru.blueprints.Reservation.schemas import ReservationResponseSchema, dump_reservation
 from sqlalchemy import select, and_
 
 
@@ -24,8 +24,13 @@ class ReservationService:
         return conflict is None
 
     @staticmethod
-    def reservation_add(data):
+    def reservation_add(data, current_user_id=None, current_user_roles=None):
         try:
+            if current_user_roles is None:
+                current_user_roles = []
+            if "Adminisztrátor" not in current_user_roles and data["user_id"] != current_user_id:
+                return False, "Access denied"
+
             start_date = data["reserved_start_date"]
             end_date = data["reserved_end_date"]
 
@@ -68,7 +73,7 @@ class ReservationService:
 
             db.session.commit()
 
-            return True, ReservationResponseSchema().dump(resevation)
+            return True, dump_reservation(resevation)
 
         except Exception as ex:
             db.session.rollback()
@@ -80,7 +85,18 @@ class ReservationService:
         reservations = db.session.execute(
             select(Reservation).filter_by(user_id=user_id).order_by(Reservation.id.desc())
         ).scalars().all()
-        return True, ReservationResponseSchema().dump(reservations, many=True)
+        return True, dump_reservation(reservations, many=True)
+
+    @staticmethod
+    def get_reservation(reservation_id, user_id, roles=None):
+        if roles is None:
+            roles = []
+        reservation = db.session.get(Reservation, reservation_id)
+        if not reservation:
+            return False, "Reservation not found"
+        if reservation.user_id != user_id and "Adminisztrátor" not in roles and "Recepciós" not in roles:
+            return False, "Access denied"
+        return True, dump_reservation(reservation)
 
     @staticmethod
     def reservation_cancel(reservation_id, user_id=None):
@@ -116,10 +132,7 @@ class ReservationService:
 
             db.session.commit()
 
-            return True, (
-            ReservationResponseSchema()
-            .dump(reservation)
-        )
+            return True, dump_reservation(reservation)
 
         except Exception as ex:
 
