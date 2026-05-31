@@ -8,9 +8,6 @@ from apiflask import HTTPError
 from Hotelguru.extensions import auth
 from Hotelguru.blueprints import role_required
 
-@bp.route('/')
-def index():
-    return 'This is The Reception Blueprint'
 
 @bp.put('/check_in/<int:reservationid>')
 @bp.doc(tags=["reception"])

@@ -33,19 +33,21 @@
         <span>Keresés:</span>
         <form action="" method="post" novalidate style="display: flex; align-items: center; gap: 5px; margin: 0;">
             {{ search.hidden_tag() }}
+            {{ search.name.label }}
+            {{ search.name(size=32) }}
             {{ search.city.label }}
             {{ search.city(size=32) }}
             {{ search.submit_search() }}
-            {% for error in search.city.errors %}
-                <span style="color:red;">[{{ error }}]</span>
-            {% endfor %}
         </form>
     </div>
 
     <table>
         {% for hotel in hotels %}
             <tr>
-                <td>id: {{ hotel.id }}</td>
+                {% if 'Adminisztrátor' in roles | map(attribute='name') %}
+                    <td><input type="radio" name="room_selector" value="{{ hotel.id }}" onclick="selectRoom(this.value)"></td>
+                {% endif %}
+                <!-- <td>id: {{ hotel.id }}</td> -->
                 <td>{{ hotel.name }}</td>
                 <td>Cím: {{ hotel.city }} {{ hotel.address }}</td>
                 <td>Értékelés: {{ hotel.rating }}</td>
@@ -93,8 +95,7 @@
     <form action="" method="post" novalidate>
         {{ updatehotel.hidden_tag() }}
         <p>
-            {{ updatehotel.hotelid.label}}<br />
-            {{ updatehotel.hotelid(size = 32)}}<br />
+            {{ updatehotel.hotelid(id="updatehotel_id", type="hidden")}}<br />
             {% for error in updatehotel.hotelid.errors %}
                 <span style="color:red;">[{{error}}]</span>
             {% endfor %}
@@ -131,8 +132,7 @@
                         <form action="" method="post" novalidate>
                             {{ deletehotel.hidden_tag() }}
                             <p>
-                                {{ deletehotel.hotelid.label }}<br />
-                                {{ deletehotel.hotelid(size=32) }}<br />
+                                {{ deletehotel.hotelid(id="deletehotel_id", type="hidden") }}<br />
                                 {% for error in deletehotel.hotelid.errors %}
                                     <span style="color:red;">[{{ error }}]</span>
                                 {% endfor %}
@@ -144,4 +144,10 @@
             </table>
         </div>
     {% endif %}
+    <script>
+    function selectHotel(id) {
+        if(document.getElementById('updatehotel_id')) document.getElementById('updatehotel_id').value = id;
+        if(document.getElementById('deletehotel_id')) document.getElementById('deletehotel_id').value = id;
+    }
+    </script>
 {% endblock %}

@@ -38,5 +38,5 @@ class RoomListSchema(Schema):
     hotel = fields.Nested(HotelResponseSchema)
 
 class RoomAvalibleDateSchema(Schema):
-    start_date = fields.DateTime()
-    end_date = fields.DateTime()
+    start_date = fields.Date(required=True)
+    end_date = fields.Date(required=True)

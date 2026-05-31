@@ -6,7 +6,7 @@ from Hotelguru.Forms.roomForms import NewRoom, UpdateRoom, DeleteRoom
 from Hotelguru.Forms.registerForm import RegisterForm
 from Hotelguru.Forms.updateUser import UpdateForm
 from Hotelguru.Forms.hotelForms import NewHotel, UpdateHotel, DeleteHotel
-from Hotelguru.Forms.searchForm import SearchForm
+from Hotelguru.Forms.searchForm import SearchForm, RoomSearchForm
 
 
 
@@ -25,13 +25,17 @@ def get_user_from_session():
 @bp.route('/index', methods=['GET', 'POST'])
 def home():
     city_filter = request.args.get('city')
-    if city_filter:
-        api_url = request.host_url + "listhotels/" + city_filter
+    name_filter = request.args.get('name')
+    if name_filter and city_filter:
+        hotels = requests.get(request.host_url + "listhotels/" + city_filter).json()
+        hotels = [hotel for hotel in hotels if name_filter.lower() in hotel['name'].lower()]
+    elif city_filter and not name_filter:
+        hotels = requests.get(request.host_url + "listhotels/" + city_filter).json()
     else:
-        api_url = request.host_url + "listhotels"
+        hotels = requests.get(request.host_url + "listhotels").json()
+        if name_filter:
+            hotels = [hotel for hotel in hotels if name_filter.lower() in hotel['name'].lower()]
 
-    response = requests.get(api_url)
-    hotels = response.json()
 
     loginform=LoginForm()
     if loginform.validate_on_submit() and loginform.submit_login.data:
@@ -55,7 +59,7 @@ def home():
 
     searchform = SearchForm()
     if searchform.validate_on_submit() and searchform.submit_search.data:
-        return redirect(url_for('main.home', city=searchform.city.data))
+        return redirect(url_for('main.home', name=searchform.name.data, city=searchform.city.data))
 
     newhotelform = NewHotel()
     if newhotelform.validate_on_submit() and newhotelform.submit_add.data:
@@ -136,9 +140,16 @@ def logout():
 
 @bp.route('/rooms/<hid>', methods=['GET', 'POST', 'PUT'])
 def rooms(hid):
-    api_url = request.host_url + "listrooms/" + hid
-    response = requests.get(api_url)
-    rooms = response.json()
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    if start_date and end_date:
+        rooms = requests.get(request.host_url + "avalible?start_date="+start_date+"&end_date="+end_date).json()
+        rooms = [room for room in rooms if room['hotel']['id'] == int(hid)]
+        if not rooms:
+            rooms = requests.get(request.host_url + "listrooms/" + hid).json()
+            flash("No rooms available")
+    else:
+        rooms = requests.get(request.host_url + "listrooms/" + hid).json()
     
     user = get_user_from_session()
     roles = []
@@ -185,15 +196,22 @@ def rooms(hid):
     deleteroomform = DeleteRoom()
     if deleteroomform.validate_on_submit() and deleteroomform.submit_delete.data:
         response = requests.put(request.host_url + "deleteroom/" + str(deleteroomform.roomid.data), headers=headers)
+        print(response)
         if response.status_code == 200:
             flash("Room deleted successfully")
         else:
             flash("Room delete failed")
         return redirect(f"/rooms/{hid}")
 
+    roomsearchform = RoomSearchForm()
+    if roomsearchform.validate_on_submit() and roomsearchform.submit_search.data:
+        return redirect(url_for('main.rooms', hid=hid, start_date=roomsearchform.start_date.data, end_date=roomsearchform.end_date.data))
+
+
     return render_template(
         'rooms.html', 
         rooms=rooms, user=user, roles=roles, hid=hid, 
         services=services, newroom=newroomform, 
-        updateroom=updateroomform, deleteroom=deleteroomform
+        updateroom=updateroomform, deleteroom=deleteroomform,
+        roomsearch=roomsearchform
     )
