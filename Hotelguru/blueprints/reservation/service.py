@@ -3,20 +3,41 @@ from Hotelguru.extensions import db
 from Hotelguru.models.Reservation import Reservation
 from Hotelguru.models.ReservationRoom import ReservationRoom
 from Hotelguru.models.Room import Room
-from Hotelguru.blueprints.reservation.schemas import ReservationResponseSchema
+from Hotelguru.blueprints.Reservation.schemas import ReservationResponseSchema
+from sqlalchemy import select, and_
 
 
 class ReservationService:
 
     @staticmethod
+    def _room_is_available(room_id, start_date, end_date):
+        conflict = db.session.execute(
+            select(ReservationRoom.id)
+            .join(Reservation)
+            .where(
+                ReservationRoom.room_id == room_id,
+                Reservation.status != "Cancelled",
+                Reservation.reserved_start_date <= end_date,
+                Reservation.reserved_end_date >= start_date,
+            )
+        ).first()
+        return conflict is None
+
+    @staticmethod
     def reservation_add(data):
         try:
+            start_date = data["reserved_start_date"]
+            end_date = data["reserved_end_date"]
+
+            if start_date >= end_date:
+                return False, "End date must be after start date"
+
             resevation = Reservation()
 
             resevation.user_id = data["user_id"]
 
-            resevation.reserved_start_date = data["reserved_start_date"]
-            resevation.reserved_end_date = data["reserved_end_date"]
+            resevation.reserved_start_date = start_date
+            resevation.reserved_end_date = end_date
 
             resevation.status = "Pending"
             resevation.created_at = datetime.now()
@@ -31,6 +52,10 @@ class ReservationService:
                 if not room:
                     db.session.rollback()
                     return False, f"Room {room_id} not found"
+
+                if not ReservationService._room_is_available(room_id, start_date, end_date):
+                    db.session.rollback()
+                    return False, f"Room {room_id} is not available for the selected dates"
 
                 rr = ReservationRoom()
 
@@ -51,7 +76,14 @@ class ReservationService:
             return False, str(ex)
 
     @staticmethod
-    def reservation_cancel(reservation_id):
+    def get_user_reservations(user_id):
+        reservations = db.session.execute(
+            select(Reservation).filter_by(user_id=user_id).order_by(Reservation.id.desc())
+        ).scalars().all()
+        return True, ReservationResponseSchema().dump(reservations, many=True)
+
+    @staticmethod
+    def reservation_cancel(reservation_id, user_id=None):
 
         try:
 
@@ -59,6 +91,9 @@ class ReservationService:
 
             if not reservation:
                 return False, "Reservation not found"
+
+            if user_id is not None and reservation.user_id != user_id:
+                return False, "Access denied"
 
             if reservation.status == "Checked-In":
                 return False, (

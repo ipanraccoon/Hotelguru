@@ -124,8 +124,10 @@ def rooms(hid):
     
     user = get_user_from_session()
     roles=[]
+    headers = {}
     if user:
-        roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
+        headers = {'Authorization': f"Bearer {user['token']}"}
+        roles = requests.get(request.host_url + "userroles", headers=headers).json()
     services = requests.get(request.host_url + "services/"+hid).json()
     print(request.host_url)
 

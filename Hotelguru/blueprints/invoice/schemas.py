@@ -7,6 +7,8 @@ class InvoiceItemSchema(Schema):
     amount = Integer()
 
 class InvoiceSchema(Schema):
+    id = Integer()
+    reservation_id = Integer()
     total_amount = Integer()
     items = Nested(InvoiceItemSchema, many=True)
     created_at = String()

@@ -7,4 +7,4 @@ bp = APIBlueprint(
     tag="Reservation"
 )
 
-from Hotelguru.blueprints.reservation import routes
+from Hotelguru.blueprints.Reservation import routes

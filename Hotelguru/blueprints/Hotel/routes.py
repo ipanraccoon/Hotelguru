@@ -3,7 +3,7 @@ import json
 from sre_constants import SUCCESS
 from urllib import response
 from Hotelguru.blueprints.Hotel import bp
-from Hotelguru.blueprints.Hotel.schemas import HotelResponseSchema, HotelRequestSchema, HotelReviewRequestSchema, HotelReviewResponseSchema
+from Hotelguru.blueprints.Hotel.schemas import HotelResponseSchema, HotelRequestSchema, HotelUpdateSchema, HotelReviewRequestSchema, HotelReviewResponseSchema
 from Hotelguru.blueprints.Hotel.service import HotelService
 from apiflask.fields import String, Integer
 from apiflask import HTTPError
@@ -39,6 +39,17 @@ def hotel_add(json_data):
     if not success:
        return {"message": response}, 400
     return response
+
+@bp.put('/updatehotel/<int:hid>')
+@bp.input(HotelUpdateSchema)
+@bp.output(HotelResponseSchema)
+@bp.auth_required(auth)
+@role_required(["Adminisztrátor"])
+def hotel_update(hid, json_data):
+    success, response = HotelService.hotel_update(hid, json_data)
+    if success:
+        return response, 200
+    return {"message": response}, 400
 
 @bp.put('/deletehotel/<int:hid>')
 @bp.auth_required(auth)

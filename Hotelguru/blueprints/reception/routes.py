@@ -3,7 +3,7 @@ from Hotelguru.blueprints.reception import bp
 from Hotelguru.blueprints.reception.service import ReceptionService
 from Hotelguru.blueprints.reception.schemas import AddServiceSchema, ReservationServiceResponseSchema
 from Hotelguru.blueprints.invoice.schemas import InvoiceSchema
-from Hotelguru.blueprints.reservation.schemas import ReservationResponseSchema
+from Hotelguru.blueprints.Reservation.schemas import ReservationResponseSchema
 from apiflask import HTTPError
 from Hotelguru.extensions import auth
 from Hotelguru.blueprints import role_required

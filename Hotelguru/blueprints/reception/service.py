@@ -7,9 +7,16 @@ from Hotelguru.models.Service import Service
 from Hotelguru.models.ReservationService import ReservationService
 from Hotelguru.extensions import db
 from Hotelguru.blueprints.invoice.schemas import InvoiceSchema
-from Hotelguru.blueprints.reservation.schemas import ReservationResponseSchema
+from Hotelguru.blueprints.Reservation.schemas import ReservationResponseSchema
 from Hotelguru.blueprints.reception.schemas import ReservationServiceResponseSchema
 from datetime import date, datetime
+from Hotelguru.extensions import auth
+
+
+def _as_date(value):
+    if isinstance(value, datetime):
+        return value.date()
+    return value
 
 
 class ReceptionService:
@@ -26,7 +33,7 @@ class ReceptionService:
             if reservation.status == "Checked-In":
                 return False, "Guest is already checked in."
 
-            if reservation.reserved_start_date > date.today():
+            if _as_date(reservation.reserved_start_date) > date.today():
                 return False, "Too early check in."
             
             reservation.status = "Checked-In"
@@ -68,7 +75,7 @@ class ReceptionService:
 
 
     @staticmethod
-    def check_out(reservation_id):
+    def check_out(reservation_id, issued_by=None):
         reservation = db.session.execute(db.select(Reservation).filter_by(id=reservation_id)).scalar_one_or_none()
         if not reservation:
             return False, "Reservation not found"
@@ -80,18 +87,20 @@ class ReceptionService:
             return False, "Guest is not checked in"
             
         try:
-            diff = reservation.reserved_end_date.date() - reservation.reserved_start_date.date()
+            start = _as_date(reservation.reserved_start_date)
+            end = _as_date(reservation.reserved_end_date)
+            diff = end - start
             nights = diff.days if diff.days > 0 else 1
             
             total_amount = 0
             invoice_items = []
                        
-            for room in reservation.rooms:
-                room_total = room.price_per_night * nights
+            for reservation_room in reservation.rooms:
+                room_total = reservation_room.price_per_night * nights
                 total_amount += room_total
                 
                 item = InvoiceItem(
-                    description=f"Szoba {room.room.number} - ({nights} éjszaka)",
+                    description=f"Szoba {reservation_room.rooms.number} - ({nights} éjszaka)",
                     amount=room_total
                 )
                 invoice_items.append(item)
@@ -109,7 +118,7 @@ class ReceptionService:
                 total_amount=total_amount,
                 created_at=datetime.now(),
                 reservation_id=reservation.id,
-                issued_by=1, #majd a recepcios id-je kell ide tokenbol
+                issued_by=issued_by or auth.current_user["user_id"],
                 items=invoice_items
             )
             

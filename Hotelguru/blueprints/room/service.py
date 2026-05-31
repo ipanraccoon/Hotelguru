@@ -1,4 +1,4 @@
-from numbers import Number
+from datetime import date
 from Hotelguru.extensions import db
 from Hotelguru.blueprints.room.schemas import RoomRequestSchema, RoomResponseSchema, RoomStatusSchema, RoomListSchema
 from Hotelguru.models.Reservation import Reservation
@@ -100,18 +100,33 @@ class RoomService:
         return True, RoomListSchema().dump(rooms, many=True)
 
     @staticmethod
-    def room_list_avalible(city, start_date, end_date):
+    def room_list_available(city, start_date, end_date):
+        if isinstance(start_date, str):
+            start_date = date.fromisoformat(start_date)
+        if isinstance(end_date, str):
+            end_date = date.fromisoformat(end_date)
+
+        reserved_rooms = (
+            select(ReservationRoom.room_id)
+            .join(Reservation)
+            .join(Room, ReservationRoom.room_id == Room.id)
+            .join(Hotel, Room.hotel_id == Hotel.id)
+            .where(and_(
+                Hotel.city == city,
+                Reservation.status != "Cancelled",
+                Reservation.reserved_start_date <= end_date,
+                Reservation.reserved_end_date >= start_date,
+            ))
+        )
         rooms = db.session.execute(
             select(Room)
             .join(Hotel, Room.hotel_id == Hotel.id)
             .where(Hotel.city == city)
-            .where(~Room.reservations.any(
-                ReservationRoom.reservation.has(and_(
-                    Reservation.status != "Cancelled",
-                    Reservation.reserved_start_date <= end_date,
-                    Reservation.reserved_end_date >= start_date
-                    ))
-                ))
-            ).scalars().all()
+            .where(~Room.id.in_(reserved_rooms))
+        ).scalars().all()
 
         return True, RoomListSchema().dump(rooms, many=True)
+
+    @staticmethod
+    def room_list_avalible(city, start_date, end_date):
+        return RoomService.room_list_available(city, start_date, end_date)

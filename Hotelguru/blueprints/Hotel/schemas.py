@@ -18,6 +18,12 @@ class HotelRequestSchema(Schema):
     city = fields.String()
     address = fields.String()
 
+class HotelUpdateSchema(Schema):
+    name = fields.String()
+    city = fields.String()
+    address = fields.String()
+    rating = fields.Float(required=False, allow_none=True)
+
 class HotelReviewRequestSchema(Schema):
 
     user_id = Integer(required=True)
