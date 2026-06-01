@@ -35,6 +35,10 @@ def create_app(config_class=Config):
 
     from Hotelguru.blueprints.reservation import bp as bp_reservation
     app.register_blueprint(bp_reservation)
+
+    from Hotelguru.blueprints.invoice import bp as bp_invoice
+    app.register_blueprint(bp_invoice)
+
     return app
 
 from Hotelguru import models, views
