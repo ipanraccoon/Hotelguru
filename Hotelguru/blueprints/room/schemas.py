@@ -17,6 +17,9 @@ class RoomStatusSchema(Schema):
     id = fields.Integer()
     name = fields.String()
 
+class RoomStatusUpdateSchema(Schema):
+    status_id = fields.Integer(required=True)
+
 class RoomResponseSchema(Schema):
     id = fields.Integer()
     number = fields.Integer()
@@ -38,5 +41,5 @@ class RoomListSchema(Schema):
     hotel = fields.Nested(HotelResponseSchema)
 
 class RoomAvalibleDateSchema(Schema):
-    start_date = fields.DateTime()
-    end_date = fields.DateTime()
+    start_date = fields.Date(required=True)
+    end_date = fields.Date(required=True)

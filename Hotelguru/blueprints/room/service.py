@@ -1,4 +1,4 @@
-from numbers import Number
+from datetime import date
 from Hotelguru.extensions import db
 from Hotelguru.blueprints.room.schemas import RoomRequestSchema, RoomResponseSchema, RoomStatusSchema, RoomListSchema
 from Hotelguru.models.Reservation import Reservation
@@ -6,6 +6,7 @@ from Hotelguru.models.ReservationRoom import ReservationRoom
 from Hotelguru.models.RoomStatus import RoomStatus
 from Hotelguru.models.Hotel import Hotel
 from Hotelguru.models.Room import Room
+from Hotelguru.room_availability import is_room_bookable
 from sqlalchemy import Select, select, and_
 
 class RoomService:
@@ -96,22 +97,55 @@ class RoomService:
         rooms = db.session.execute(
             select(Room).where(~Room.id.in_(reserved_rooms))
             ).scalars().all()
+        rooms = [room for room in rooms if is_room_bookable(room)]
 
         return True, RoomListSchema().dump(rooms, many=True)
 
     @staticmethod
-    def room_list_avalible(city, start_date, end_date):
+    def room_list_available(city, start_date, end_date):
+        if isinstance(start_date, str):
+            start_date = date.fromisoformat(start_date)
+        if isinstance(end_date, str):
+            end_date = date.fromisoformat(end_date)
+
+        reserved_rooms = (
+            select(ReservationRoom.room_id)
+            .join(Reservation)
+            .join(Room, ReservationRoom.room_id == Room.id)
+            .join(Hotel, Room.hotel_id == Hotel.id)
+            .where(and_(
+                Hotel.city == city,
+                Reservation.status != "Cancelled",
+                Reservation.reserved_start_date <= end_date,
+                Reservation.reserved_end_date >= start_date,
+            ))
+        )
         rooms = db.session.execute(
             select(Room)
             .join(Hotel, Room.hotel_id == Hotel.id)
             .where(Hotel.city == city)
-            .where(~Room.reservations.any(
-                ReservationRoom.reservation.has(and_(
-                    Reservation.status != "Cancelled",
-                    Reservation.reserved_start_date <= end_date,
-                    Reservation.reserved_end_date >= start_date
-                    ))
-                ))
-            ).scalars().all()
+            .where(~Room.id.in_(reserved_rooms))
+        ).scalars().all()
+        rooms = [room for room in rooms if is_room_bookable(room)]
 
         return True, RoomListSchema().dump(rooms, many=True)
+
+    @staticmethod
+    def room_update_status(room_id, status_id):
+        try:
+            room = db.session.get(Room, room_id)
+            if not room:
+                return False, "Room not found"
+            status = db.session.get(RoomStatus, status_id)
+            if not status:
+                return False, "Invalid statusID"
+            room.status_id = status_id
+            db.session.commit()
+            return True, RoomResponseSchema().dump(room)
+        except Exception:
+            db.session.rollback()
+            return False, "room_update_status() error"
+
+    @staticmethod
+    def room_list_avalible(city, start_date, end_date):
+        return RoomService.room_list_available(city, start_date, end_date)

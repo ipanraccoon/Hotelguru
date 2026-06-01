@@ -2,11 +2,13 @@ from flask import render_template, request, flash, redirect, session, url_for
 from Hotelguru.blueprints.main import bp
 import requests
 from Hotelguru.Forms.loginForm import LoginForm
-from Hotelguru.Forms.roomForms import NewRoom, UpdateRoom, DeleteRoom
+from Hotelguru.Forms.roomForms import RoomForm
 from Hotelguru.Forms.registerForm import RegisterForm
 from Hotelguru.Forms.updateUser import UpdateForm
-from Hotelguru.Forms.hotelForms import NewHotel, UpdateHotel, DeleteHotel
-from Hotelguru.Forms.searchForm import SearchForm
+from Hotelguru.Forms.hotelForms import HotelForm
+from Hotelguru.Forms.searchForm import SearchForm, RoomSearchForm
+from Hotelguru.Forms.serviceForms import ServiceForm
+from Hotelguru.Forms.reviewForm import ReviewForm
 
 
 
@@ -25,13 +27,17 @@ def get_user_from_session():
 @bp.route('/index', methods=['GET', 'POST'])
 def home():
     city_filter = request.args.get('city')
-    if city_filter:
-        api_url = request.host_url + "listhotels/" + city_filter
+    name_filter = request.args.get('name')
+    if name_filter and city_filter:
+        hotels = requests.get(request.host_url + "listhotels/" + city_filter).json()
+        hotels = [hotel for hotel in hotels if name_filter.lower() in hotel['name'].lower()]
+    elif city_filter and not name_filter:
+        hotels = requests.get(request.host_url + "listhotels/" + city_filter).json()
     else:
-        api_url = request.host_url + "listhotels"
+        hotels = requests.get(request.host_url + "listhotels").json()
+        if name_filter:
+            hotels = [hotel for hotel in hotels if name_filter.lower() in hotel['name'].lower()]
 
-    response = requests.get(api_url)
-    hotels = response.json()
 
     loginform=LoginForm()
     if loginform.validate_on_submit() and loginform.submit_login.data:
@@ -45,42 +51,46 @@ def home():
     
     user = get_user_from_session()
     roles = []
+    headers = {}
     if user:
         roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
-
-    if user:
         headers = {'Authorization': f"Bearer {user['token']}"}
-    else:
-        headers = {}
+        
 
     searchform = SearchForm()
     if searchform.validate_on_submit() and searchform.submit_search.data:
-        return redirect(url_for('main.home', city=searchform.city.data))
+        return redirect(url_for('main.home', name=searchform.name.data, city=searchform.city.data))
 
-    newhotelform = NewHotel()
-    if newhotelform.validate_on_submit() and newhotelform.submit_add.data:
-        response = requests.post(request.host_url + "addhotel", json={
-            "name": newhotelform.name.data,
-            "city": newhotelform.city.data,
-            "address": newhotelform.address.data
-        }, headers=headers)
-        if response.status_code == 200:
-            flash("Hotel added successfully")
-        else:
-            flash("Hotel add failed")
-        return redirect("/")
-    
-    updatehotelform = UpdateHotel()
-    if updatehotelform.validate_on_submit() and updatehotelform.submit_update.data:
-        pass
+    hotelform = HotelForm()
+    if hotelform.validate_on_submit():
+        if hotelform.submit_add.data:
+            response = requests.post(request.host_url + "addhotel", json={
+                "name": hotelform.name.data,
+                "city": hotelform.city.data,
+                "address": hotelform.address.data
+            }, headers=headers)
+            if response.status_code == 200:
+                flash("Hotel added successfully")
+            else:
+                flash("Hotel add failed")
 
-    deletehotelform = DeleteHotel()
-    if deletehotelform.validate_on_submit() and deletehotelform.submit_delete.data:
-        response = requests.put(request.host_url + "deletehotel/" + str(deletehotelform.hotelid.data), headers=headers)
-        if response.status_code == 200:
-            flash("Hotel deleted successfully")
-        else:
-            flash("Hotel delete failed")
+        elif hotelform.submit_update.data:
+            response = requests.put(request.host_url + "updatehotel/" + str(hotelform.hotelid.data), json={
+                "name": hotelform.name.data,
+                "city": hotelform.city.data,
+                "address": hotelform.address.data
+            }, headers=headers)
+            if response.status_code == 200:
+                flash("Hotel updated successfully")
+            else:
+                flash("Hotel update failed")
+        
+        elif hotelform.submit_delete.data:
+            response = requests.put(request.host_url + "deletehotel/" + str(hotelform.hotelid.data), headers=headers)
+            if response.status_code == 200:
+                flash("Hotel deleted successfully")
+            else:
+                flash("Hotel delete failed")
         return redirect("/")
 
 
@@ -88,8 +98,7 @@ def home():
     return render_template(
         'main.html', 
         hotels=hotels, login=loginform, user=user,roles=roles, 
-        newhotel=newhotelform, updatehotel=updatehotelform, 
-        deletehotel=deletehotelform, search=searchform)
+        hotelform=hotelform, search=searchform)
 
 @bp.route('/reg', methods=['GET', 'POST'])
 def register():
@@ -136,64 +145,121 @@ def logout():
 
 @bp.route('/rooms/<hid>', methods=['GET', 'POST', 'PUT'])
 def rooms(hid):
-    api_url = request.host_url + "listrooms/" + hid
-    response = requests.get(api_url)
-    rooms = response.json()
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    if start_date and end_date:
+        rooms = requests.get(request.host_url + "avalible?start_date="+start_date+"&end_date="+end_date).json()
+        rooms = [room for room in rooms if room['hotel']['id'] == int(hid)]
+        if not rooms:
+            rooms = requests.get(request.host_url + "listrooms/" + hid).json()
+            flash("No rooms available")
+    else:
+        rooms = requests.get(request.host_url + "listrooms/" + hid).json()
     
     user = get_user_from_session()
     roles = []
+    headers = {}
     if user:
         roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
         headers = {'Authorization': f"Bearer {user['token']}"}
-    else:
-        headers = {}
+     
         
     services = requests.get(request.host_url + "services/" + hid).json()
 
-    newroomform = NewRoom()
-    if newroomform.validate_on_submit() and newroomform.submit_add.data:
-        response = requests.post(request.host_url + "addhotelroom", json={
-            "number": newroomform.number.data,
-            "beds": newroomform.beds.data,
-            "kitchen": newroomform.kitchen.data,
-            "price": newroomform.price.data,
-            "status_id": 1,
-            "hotel_id": hid
-        }, headers=headers)
-        if response.status_code == 200:
-            flash("Room added successfully")
-        else:
-            flash("Room add failed")
+    roomform = RoomForm()
+    if roomform.validate_on_submit():
+        statusid=int(roomform.status.data)
+        if roomform.submit_roomadd.data:
+            response = requests.post(request.host_url + "addhotelroom", json={
+                "number": roomform.number.data,
+                "beds": roomform.beds.data,
+                "kitchen": roomform.kitchen.data,
+                "price": roomform.price.data,
+                "hotel_id": hid,
+                "status_id": statusid
+            }, headers=headers)
+            if response.status_code == 200:
+                flash("Room added successfully")
+            else:
+                flash("Room add failed")
+
+        elif roomform.submit_roomupdate.data:
+            response = requests.put(request.host_url + "updateroom/" + str(roomform.roomid.data), json={
+                "number": roomform.number.data,
+                "beds": roomform.beds.data,
+                "kitchen": roomform.kitchen.data,
+                "price": roomform.price.data,
+                "hotel_id": hid,
+            }, headers=headers)
+            requests.put(request.host_url + "roomstatus/" + str(roomform.roomid.data), json={"status_id": statusid}, headers=headers)
+            if response.status_code == 200:
+                flash("Room updated successfully")
+            else:
+                flash("Room update failed")
+
+        elif roomform.submit_roomdelete.data:
+            response = requests.put(request.host_url + "deleteroom/" + str(roomform.roomid.data), headers=headers)
+            if response.status_code == 200:
+                flash("Room deleted successfully")
+            else:
+                flash("Room delete failed")
+        return redirect(url_for('main.rooms', hid=hid))
+
+
+    roomsearchform = RoomSearchForm()
+    if roomsearchform.validate_on_submit() and roomsearchform.submit_search.data:
+        return redirect(url_for('main.rooms', hid=hid, start_date=roomsearchform.start_date.data, end_date=roomsearchform.end_date.data))
+
+    serviceform = ServiceForm()
+    if serviceform.validate_on_submit():
+        if serviceform.submit_seradd.data:
+            response = requests.post(request.host_url + "services", json={
+                "name": serviceform.name.data,
+                "price": serviceform.price.data,
+                "hotel_id": hid
+            }, headers=headers)
+            if response.status_code == 200:
+                flash("Service added successfully")
+            else:
+                flash("Service add failed")
+            
+        elif serviceform.submit_serupdate.data:
+            response = requests.put(request.host_url + "services/" + str(serviceform.serviceid.data), json={
+                "name": serviceform.name.data,
+                "price": serviceform.price.data,
+            }, headers=headers)
+            if response.status_code == 200:
+                flash("Service updated successfully")
+            else:
+                flash("Service update failed: ")
+
+        elif serviceform.submit_serdelete.data:
+            response = requests.delete(request.host_url + "services/" + str(serviceform.serviceid.data), headers=headers)
+            if response.status_code == 200:
+                flash("Service deleted successfully")
+            else:
+                flash("Service delete failed")    
         return redirect(f"/rooms/{hid}")
 
-    updateroomform = UpdateRoom()
-    if updateroomform.validate_on_submit() and updateroomform.submit_update.data:
-        response = requests.put(request.host_url + "updateroom/" + str(updateroomform.roomid.data), json={
-            "number": updateroomform.number.data,
-            "beds": updateroomform.beds.data,
-            "kitchen": updateroomform.kitchen.data,
-            "price": updateroomform.price.data,
-            "status_id": 1,
-            "hotel_id": hid
+    reviewform = ReviewForm()
+    if reviewform.validate_on_submit() and reviewform.submitreview.data:
+        response = requests.post(request.host_url + "review/add", json={
+            "hotel_id": int(hid),
+            "rating": reviewform.rating.data,
+            "comment": reviewform.comment.data
         }, headers=headers)
         if response.status_code == 200:
-            flash("Room updated successfully")
+            flash("Review added successfully")
         else:
-            flash("Room update failed")
-        return redirect(f"/rooms/{hid}")
+            msg = response.json().get('message', response.text)
+            flash(f"Review add failed: {msg}")
+        return redirect(url_for('main.rooms', hid=hid))
 
-    deleteroomform = DeleteRoom()
-    if deleteroomform.validate_on_submit() and deleteroomform.submit_delete.data:
-        response = requests.put(request.host_url + "deleteroom/" + str(deleteroomform.roomid.data), headers=headers)
-        if response.status_code == 200:
-            flash("Room deleted successfully")
-        else:
-            flash("Room delete failed")
-        return redirect(f"/rooms/{hid}")
 
     return render_template(
         'rooms.html', 
         rooms=rooms, user=user, roles=roles, hid=hid, 
-        services=services, newroom=newroomform, 
-        updateroom=updateroomform, deleteroom=deleteroomform
+        services=services,  reviewform=reviewform,
+        roomform=roomform, roomsearch=roomsearchform, 
+        serviceform=serviceform
     )

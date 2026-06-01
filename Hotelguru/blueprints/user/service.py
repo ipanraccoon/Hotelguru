@@ -75,7 +75,35 @@ class UserService:
         db.session.commit()
         return True, UserSchema().dump(user)
 
+    @staticmethod
+    def assign_role(userid, role_id):
+        user = db.session.execute(db.select(User).filter_by(id=userid)).scalar_one_or_none()
+        if not user:
+            return False, "User not found"
+        role = db.session.execute(db.select(Role).filter_by(id=role_id)).scalar_one_or_none()
+        if not role:
+            return False, "Role not found"
+        if role in user.roles:
+            return False, "User already has this role"
+        user.roles.append(role)
+        db.session.commit()
+        return True, RoleSchema().dump(user.roles, many=True)
 
+    @staticmethod
+    def remove_role(userid, role_id):
+        user = db.session.execute(db.select(User).filter_by(id=userid)).scalar_one_or_none()
+        if not user:
+            return False, "User not found"
+        role = db.session.execute(db.select(Role).filter_by(id=role_id)).scalar_one_or_none()
+        if not role:
+            return False, "Role not found"
+        if role not in user.roles:
+            return False, "User does not have this role"
+        if len(user.roles) <= 1:
+            return False, "User must have at least one role"
+        user.roles.remove(role)
+        db.session.commit()
+        return True, RoleSchema().dump(user.roles, many=True)
 
     @staticmethod
     def token_generate(user : User):

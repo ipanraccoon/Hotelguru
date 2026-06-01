@@ -11,7 +11,9 @@ from Hotelguru.models.Room import Room
 from Hotelguru.models.Hotel import Hotel
 from Hotelguru.models.User import User
 from Hotelguru.models.HotelReview import HotelReview
-from sqlalchemy import False_, Select, select, and_, func
+from sqlalchemy import select, and_, func
+from Hotelguru.models.Service import Service
+from Hotelguru.extensions import auth
 
 class HotelService:
 
@@ -49,13 +51,20 @@ class HotelService:
         try:
             hotel = db.session.get(Hotel, hid)
 
-            if hotel:
+            if not hotel:
+                return False, "Hotel not found"
+
+            if "name" in request:
                 hotel.name = request["name"]
+            if "city" in request:
+                hotel.city = request["city"]
+            if "address" in request:
                 hotel.address = request["address"]
+            if "rating" in request:
                 hotel.rating = request["rating"]
 
-                db.session.commit()
-                return True, HotelResponseSchema().dump(hotel)
+            db.session.commit()
+            return True, HotelResponseSchema().dump(hotel)
         except Exception as ex:
             db.session.rollback()
             return False, "hotel_update() error!"
@@ -65,9 +74,25 @@ class HotelService:
         try:
             hotel = db.session.get(Hotel, hid)
 
-            if hotel:
-                db.session.delete(hotel)
-                db.session.commit()
+            if not hotel:
+                return False, "Hotel not found"
+
+            for room in list(hotel.rooms):
+                has_reservations = db.session.execute(
+                    select(ReservationRoom.id).filter_by(room_id=room.id)
+                ).first()
+                if has_reservations:
+                    return False, f"Cannot delete hotel: room {room.number} has reservations"
+
+            for service in list(hotel.services):
+                db.session.delete(service)
+            for review in list(hotel.reviews):
+                db.session.delete(review)
+            for room in list(hotel.rooms):
+                db.session.delete(room)
+
+            db.session.delete(hotel)
+            db.session.commit()
 
         except Exception as ex:
              db.session.rollback()
@@ -82,6 +107,9 @@ class HotelService:
 
             if not hotel:
                 return False, "Hotel not found"
+
+            userid = auth.current_user.get("user_id")
+            data["user_id"] = userid
 
             user = db.session.get(User, data["user_id"])
 
