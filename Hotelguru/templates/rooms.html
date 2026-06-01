@@ -1,9 +1,12 @@
 {% extends "layout.html" %}
 
 {% block content %}
+        {% if rooms %}
         <h4>Hotel: {{ rooms[0].hotel.name }}</h4>
         Cím: {{ rooms[0].hotel.city }} {{ rooms[0].hotel.address }}<br />
         Értékelés: {{ rooms[0].hotel.rating }}
+        {% endif %}
+
 
     <h4>Szobák:</h4>
     <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0;">
@@ -21,7 +24,7 @@
         {% for room in rooms %}
             <tr>
                 {% if 'Adminisztrátor' in roles | map(attribute='name') %}
-                    <td><input type="radio" name="room_selector" value="{{ room.id }}" onclick="selectRoom(this.value)"></td>
+                    <td><input type="radio" name="room_selector" value="{{ room.id }}" onclick="selectRoom('{{ room.id }}', '{{ room.number }}', '{{ room.beds }}', '{{ room.kitchen }}', '{{ room.price }}', '{{ room.status.id }}')"></td>
                 {% endif %}
                 <!-- <td>id: {{ room.id }}</td> -->
                 <td>Szobaszám: {{ room.number }}</td>
@@ -33,97 +36,45 @@
         {% endfor %}
     </table>
 
-    {# Adminisztrátori műveletek #}
     {% if 'Adminisztrátor' in roles | map(attribute='name') %}
         <div style="margin-top: 20px;">
-            <table>
-                <tr>
-                    {# Új szoba hozzáadása #}
-                    <td style="vertical-align: top; padding-right: 30px;">
-                        <h2>Új szoba</h2>
-                        <form action="" method="post" novalidate>
-                            {{ newroom.hidden_tag() }}
-                            <p>
-                                {{ newroom.number.label }}<br />
-                                {{ newroom.number(size=32) }}<br />
-                                {% for error in newroom.number.errors %}
-                                    <span style="color:red;">[{{ error }}]</span>
-                                {% endfor %}
-                            </p>
-                            <p>
-                                {{ newroom.beds.label }}<br />
-                                {{ newroom.beds(size=32) }}<br />
-                                {% for error in newroom.beds.errors %}
-                                    <span style="color:red;">[{{ error }}]</span>
-                                {% endfor %}
-                            </p>
-                            <p>
-                                {{ newroom.kitchen.label }}<br />
-                                {{ newroom.kitchen(size=32) }}<br />
-                            </p>
-                            <p>
-                                {{ newroom.price.label }}<br />
-                                {{ newroom.price(size=32) }}<br />
-                                {% for error in newroom.price.errors %}
-                                    <span style="color:red;">[{{ error }}]</span>
-                                {% endfor %}
-                            </p>
-                            <p>{{ newroom.submit_add() }}</p>
-                        </form>
-                    </td>
-
-                    {# Szoba módosítása #}
-                    <td style="vertical-align: top; padding-right: 30px;">
-                        <h2>Szoba módosítása</h2>
-                        <form action="" method="post" novalidate>
-                            {{ updateroom.hidden_tag() }}
-                            {{ updateroom.roomid(id="updateroom_id", type="hidden") }}
-                            {% for error in updateroom.roomid.errors %}
-                                <span style="color:red;">[{{ error }}]</span>
-                            {% endfor %}
-                            <p>
-                                {{ updateroom.number.label }}<br />
-                                {{ updateroom.number(size=32) }}<br />
-                                {% for error in updateroom.number.errors %}
-                                    <span style="color:red;">[{{ error }}]</span>
-                                {% endfor %}
-                            </p>
-                            <p>
-                                {{ updateroom.beds.label }}<br />
-                                {{ updateroom.beds(size=32) }}<br />
-                                {% for error in updateroom.beds.errors %}
-                                    <span style="color:red;">[{{ error }}]</span>
-                                {% endfor %}
-                            </p>
-                            <p>
-                                {{ updateroom.kitchen.label }}<br />
-                                {{ updateroom.kitchen(size=32) }}<br />
-                            </p>
-                            <p>
-                                {{ updateroom.price.label }}<br />
-                                {{ updateroom.price(size=32) }}<br />
-                                {% for error in updateroom.price.errors %}
-                                    <span style="color:red;">[{{ error }}]</span>
-                                {% endfor %}
-                            </p>
-                            <p>{{ updateroom.submit_update() }}</p>
-                        </form>
-                    </td>
-
-                    {# Szoba törlése #}
-                    <td style="vertical-align: top;">
-                        <h2>Szoba törlése</h2>
-                        <form action="" method="post" novalidate>
-                            {{ deleteroom.hidden_tag() }}
-                            {{ deleteroom.roomid(id="deleteroom_id", type="hidden") }}
-                            {% for error in deleteroom.roomid.errors %}
-                                <span style="color:red;">[{{ error }}]</span>
-                            {% endfor %}
-                            <p>{{ deleteroom.submit_delete() }}</p>
-                        </form>
-                    </td>
-                </tr>
-            </table>
+            <h2>Szobák Módosítása</h2>
+            <form action="" method="post" novalidate>
+                {{ roomform.hidden_tag() }}
+                {{ roomform.roomid(id="roomform_id", type="hidden") }}
+                <p>
+                    {{ roomform.number.label }}<br />
+                    {{ roomform.number(size=32, id="roomform_number") }}<br />
+                    {% for error in roomform.number.errors %}
+                        <span style="color:red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ roomform.beds.label }}<br />
+                    {{ roomform.beds(size=32, id="roomform_beds") }}<br />
+                    {% for error in roomform.beds.errors %}
+                        <span style="color:red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ roomform.kitchen.label }}<br />
+                    {{ roomform.kitchen(id="roomform_kitchen") }}<br />
+                </p>
+                <p>
+                    {{ roomform.price.label }}<br />
+                    {{ roomform.price(size=32, id="roomform_price") }}<br />
+                    {% for error in roomform.price.errors %}
+                        <span style="color:red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ roomform.status.label }}<br />
+                    {{ roomform.status(id="roomform_status") }}
+                </p>
+                <p>
+                    {{ roomform.submit_roomadd() }} {{ roomform.submit_roomupdate() }} {{ roomform.submit_roomdelete() }}
+                </p>
+            </form>
         </div>
     {% endif %}
 
@@ -131,17 +82,48 @@
     <table>
         {% for service in services %}
             <tr>
-                <td>id: {{ service.id }}</td>
+                {% if 'Adminisztrátor' in roles | map(attribute='name') %}
+                    <td><input type="radio" name="service_selector" value="{{ service.id }}" onclick="selectService('{{ service.id }}', '{{ service.name }}', '{{ service.price }}')"></td>
+                {% endif %}
+                <!-- <td>id: {{ service.id }}</td> -->
                 <td>Név: {{ service.name }}</td>
                 <td>Ár: {{ service.price }}</td>
             </tr>
         {% endfor %}
     </table>
+    {% if 'Adminisztrátor' in roles | map(attribute='name') %}
+    <h2>Szolgáltatások módosítása</h2>
+    <form action="" method="post" novalidate>
+        {{ serviceform.hidden_tag() }}
+        <p>
+            {{ serviceform.serviceid(id="serviceform_id", type="hidden") }}
+            {{ serviceform.name.label }}<br />
+            {{ serviceform.name(size=32, id="serviceform_name") }}<br />
+            {% for error in serviceform.name.errors %}
+                <span style="color:red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ serviceform.price.label }}<br />
+            {{ serviceform.price(size=32, id="serviceform_price") }}<br />
+        </p>
+        <p>{{ serviceform.submit_seradd() }} {{ serviceform.submit_serupdate() }} {{serviceform.submit_serdelete()}}</p>        
+    </form>
+    {% endif %}
 
     <script>
-    function selectRoom(id) {
-        if(document.getElementById('updateroom_id')) document.getElementById('updateroom_id').value = id;
-        if(document.getElementById('deleteroom_id')) document.getElementById('deleteroom_id').value = id;
+    function selectRoom(id, number, beds, kitchen, price, status) {
+        if(document.getElementById('roomform_id')) document.getElementById('roomform_id').value = id;
+        if(document.getElementById('roomform_number')) document.getElementById('roomform_number').value = number;
+        if(document.getElementById('roomform_beds')) document.getElementById('roomform_beds').value = beds;
+        if(document.getElementById('roomform_kitchen')) document.getElementById('roomform_kitchen').checked = (kitchen === 'True');
+        if(document.getElementById('roomform_price')) document.getElementById('roomform_price').value = price;
+        if(document.getElementById('roomform_status')) document.getElementById('roomform_status').value = status;
+    }
+    function selectService(id, name, price) {
+        if(document.getElementById('serviceform_id')) document.getElementById('serviceform_id').value = id;
+        if(document.getElementById('serviceform_name')) document.getElementById('serviceform_name').value = name;
+        if(document.getElementById('serviceform_price')) document.getElementById('serviceform_price').value = price;
     }
     </script>
 {% endblock %}

@@ -45,7 +45,7 @@
         {% for hotel in hotels %}
             <tr>
                 {% if 'Adminisztrátor' in roles | map(attribute='name') %}
-                    <td><input type="radio" name="room_selector" value="{{ hotel.id }}" onclick="selectRoom(this.value)"></td>
+                    <td><input type="radio" name="hotel_selector" value="{{ hotel.id }}" onclick="selectHotel('{{ hotel.id }}', '{{ hotel.name }}', '{{ hotel.city }}', '{{ hotel.address }}', '{{ hotel.rating }}')"></td>
                 {% endif %}
                 <!-- <td>id: {{ hotel.id }}</td> -->
                 <td>{{ hotel.name }}</td>
@@ -56,98 +56,44 @@
         {% endfor %}
     </table>
 
-    {# Adminisztrátori műveletek #}
     {% if 'Adminisztrátor' in roles | map(attribute='name') %}
         <div style="margin-top: 20px;">
-            <table>
-                <tr>
-                    <td style="vertical-align: top; padding-right: 40px;">
-                        <h2>Új hotel</h2>
-                        <form action="" method="post" novalidate>
-                            {{ newhotel.hidden_tag() }}
-                            <p>
-                                {{ newhotel.name.label }}<br />
-                                {{ newhotel.name(size=32) }}<br />
-                                {% for error in newhotel.name.errors %}
-                                    <span style="color:red;">[{{ error }}]</span>
-                                {% endfor %}
-                            </p>
-                            <p>
-                                {{ newhotel.city.label }}<br />
-                                {{ newhotel.city(size=32) }}<br />
-                                {% for error in newhotel.city.errors %}
-                                    <span style="color:red;">[{{ error }}]</span>
-                                {% endfor %}
-                            </p>
-                            <p>
-                                {{ newhotel.address.label }}<br />
-                                {{ newhotel.address(size=32) }}<br />
-                                {% for error in newhotel.address.errors %}
-                                    <span style="color:red;">[{{ error }}]</span>
-                                {% endfor %}
-                            </p>
-                            <p>{{ newhotel.submit_add() }}</p>
-                        </form>
-                    </td>
-
-<!-- <td><p>
-    <h2>Hotel módosítása</h2>
-    <form action="" method="post" novalidate>
-        {{ updatehotel.hidden_tag() }}
-        <p>
-            {{ updatehotel.hotelid(id="updatehotel_id", type="hidden")}}<br />
-            {% for error in updatehotel.hotelid.errors %}
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ updatehotel.name.label}}<br />
-            {{ updatehotel.name(size = 32)}}<br />
-            {% for error in updatehotel.name.errors %} 
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ updatehotel.city.label}}<br />
-            {{ updatehotel.city(size=32)}}<br />
-            {% for error in updatehotel.city.errors %} 
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ updatehotel.address.label}}<br />
-            {{ updatehotel.address(size=32)}}<br />
-            {% for error in updatehotel.address.errors %} 
-                <span style="color:red;">[{{error}}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ updatehotel.submit_update()}}
-        </p>
-    </form>
-</p></td> -->
-
-                    <td style="vertical-align: top;">
-                        <h2>Hotel törlése</h2>
-                        <form action="" method="post" novalidate>
-                            {{ deletehotel.hidden_tag() }}
-                            <p>
-                                {{ deletehotel.hotelid(id="deletehotel_id", type="hidden") }}<br />
-                                {% for error in deletehotel.hotelid.errors %}
-                                    <span style="color:red;">[{{ error }}]</span>
-                                {% endfor %}
-                            </p>
-                            <p>{{ deletehotel.submit_delete() }}</p>
-                        </form>
-                    </td>
-                </tr>
-            </table>
+            <h2>Hotelek módosítása</h2>
+            <form action="" method="post" novalidate>
+                {{ hotelform.hidden_tag() }}
+                <p>
+                    {{ hotelform.hotelid(id="hotelform_id", type="hidden") }}
+                    {{ hotelform.name.label }}<br />
+                    {{ hotelform.name(size=32, id="hotelform_name") }}<br />
+                    {% for error in hotelform.name.errors %}
+                        <span style="color:red">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ hotelform.city.label }}<br />
+                    {{ hotelform.city(size=32, id="hotelform_city") }}<br />
+                    {% for error in hotelform.city.errors %}
+                        <span style="color:red">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ hotelform.address.label }}<br />
+                    {{ hotelform.address(size=32, id="hotelform_address") }}<br />
+                    {% for error in hotelform.address.errors %}
+                        <span style="color:red">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>{{ hotelform.submit_add() }} {{ hotelform.submit_update() }} {{ hotelform.submit_delete() }}</p>
+            </form>
         </div>
     {% endif %}
     <script>
-    function selectHotel(id) {
-        if(document.getElementById('updatehotel_id')) document.getElementById('updatehotel_id').value = id;
-        if(document.getElementById('deletehotel_id')) document.getElementById('deletehotel_id').value = id;
+    function selectHotel(id, name, city, address) {
+        if (document.getElementById('hotelform_id')) document.getElementById('hotelform_id').value = id;
+        if (document.getElementById('hotelform_name')) document.getElementById('hotelform_name').value = name;
+        if (document.getElementById('hotelform_city')) document.getElementById('hotelform_city').value = city;
+        if (document.getElementById('hotelform_address')) document.getElementById('hotelform_address').value = address;
+        
     }
     </script>
 {% endblock %}
