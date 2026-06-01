@@ -6,6 +6,29 @@
         Cím: {{ rooms[0].hotel.city }} {{ rooms[0].hotel.address }}<br />
         Értékelés: {{ rooms[0].hotel.rating }}
         {% endif %}
+        {% if user %}
+        <h3>Értékelés</h3>
+        <form action="" method="post" novalidate>
+            {{ reviewform.hidden_tag() }}
+            <p>
+                {{ reviewform.rating.label }}<br />
+                {{ reviewform.rating(size=32) }}<br />
+                {% for error in reviewform.rating.errors %}
+                    <span style="color:red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ reviewform.comment.label }}<br />
+                {{ reviewform.comment(size=100) }}<br />
+                {% for error in reviewform.comment.errors %}
+                    <span style="color:red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ reviewform.submitreview() }}
+            </p>
+        </form>
+        {% endif %}
 
 
     <h4>Szobák:</h4>

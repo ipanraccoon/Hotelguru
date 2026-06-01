@@ -8,6 +8,7 @@ from Hotelguru.Forms.updateUser import UpdateForm
 from Hotelguru.Forms.hotelForms import HotelForm
 from Hotelguru.Forms.searchForm import SearchForm, RoomSearchForm
 from Hotelguru.Forms.serviceForms import ServiceForm
+from Hotelguru.Forms.reviewForm import ReviewForm
 
 
 
@@ -240,10 +241,25 @@ def rooms(hid):
                 flash("Service delete failed")    
         return redirect(f"/rooms/{hid}")
 
+    reviewform = ReviewForm()
+    if reviewform.validate_on_submit() and reviewform.submitreview.data:
+        response = requests.post(request.host_url + "review/add", json={
+            "hotel_id": int(hid),
+            "rating": reviewform.rating.data,
+            "comment": reviewform.comment.data
+        }, headers=headers)
+        if response.status_code == 200:
+            flash("Review added successfully")
+        else:
+            msg = response.json().get('message', response.text)
+            flash(f"Review add failed: {msg}")
+        return redirect(url_for('main.rooms', hid=hid))
+
+
     return render_template(
         'rooms.html', 
         rooms=rooms, user=user, roles=roles, hid=hid, 
-        services=services,  
+        services=services,  reviewform=reviewform,
         roomform=roomform, roomsearch=roomsearchform, 
         serviceform=serviceform
     )

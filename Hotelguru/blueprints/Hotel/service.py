@@ -13,6 +13,7 @@ from Hotelguru.models.User import User
 from Hotelguru.models.HotelReview import HotelReview
 from sqlalchemy import select, and_, func
 from Hotelguru.models.Service import Service
+from Hotelguru.extensions import auth
 
 class HotelService:
 
@@ -106,6 +107,9 @@ class HotelService:
 
             if not hotel:
                 return False, "Hotel not found"
+
+            userid = auth.current_user.get("user_id")
+            data["user_id"] = userid
 
             user = db.session.get(User, data["user_id"])
 
