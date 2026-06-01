@@ -263,3 +263,15 @@ def rooms(hid):
         roomform=roomform, roomsearch=roomsearchform, 
         serviceform=serviceform
     )
+
+@bp.route('/personalinvoice', methods=['GET', 'POST'])
+def invoice():
+    user = get_user_from_session()
+    roles = []
+    headers = {}
+    if user:
+        roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
+        headers = {'Authorization': f"Bearer {user['token']}"}
+    response = requests.get(request.host_url + "/invoice/mine", headers)
+    invoices = response.json()
+    return render_template('invoice.html', invoices=invoices, user=user)

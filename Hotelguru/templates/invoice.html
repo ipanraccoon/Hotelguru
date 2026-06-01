@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<p>{{user.name}}</p>
+<ul>
+    {% for invoice in invoices %}
+    <li>{{invoice.id}} {{invoice.created_at}} {{invoice.total_amount}}</li>
+    <ul>
+        {% for item in invoice.items %}
+        <li>
+            {{item.description}} {{item.amount}}
+        </li>
+        {% endfor %}
+
+    </ul>
+    {% endfor %}
+
+</ul>
+
+
+{% endblock %}

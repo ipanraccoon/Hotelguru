@@ -201,6 +201,7 @@
     <Content Include="Hotelguru\static\images\hotel1.jpg" />
     <Content Include="Hotelguru\static\images\hotel2.jpg" />
     <Content Include="Hotelguru\static\images\hotel3.jpg" />
+    <Content Include="Hotelguru\templates\invoice.html" />
     <Content Include="Hotelguru\templates\weboldal\.env" />
     <Content Include="Hotelguru\templates\weboldal\.eslintignore" />
     <Content Include="Hotelguru\templates\weboldal\.eslintrc.cjs" />
