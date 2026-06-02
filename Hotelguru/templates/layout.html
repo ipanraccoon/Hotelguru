@@ -21,6 +21,7 @@
             {% if user %}
                 <li style="margin-right: 20px;"><a href="/account">Felhasználó</a></li>
                 <li style="margin-right: 20px;"><a href="/personalinvoice">Számla</a></li>
+                <li style="margin-right: 20px;"><a href="/myreservations">Foglalásaim</a></li>
                 {% if 'Recepciós' in roles | map(attribute='name') %}
                     <li style="margin-right: 20px;"><a href="/reception">Recepció</a></li>
                 {% endif %}

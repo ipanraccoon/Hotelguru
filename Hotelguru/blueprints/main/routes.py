@@ -317,3 +317,17 @@ def reception():
         reception=reception,
         user=user
     )
+
+
+
+@bp.route('/myreservations', methods=['GET', 'POST', 'PUT'])
+def myreservations():
+    user = get_user_from_session()
+    roles = []
+    headers = {}
+    if user:
+        roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
+        headers = {'Authorization': f"Bearer {user['token']}"}
+    response = requests.get(request.host_url + "/reservation/mine", headers=headers)
+    myreservations = response.json()
+    return render_template('myreservations.html', myreservations=myreservations, user=user)

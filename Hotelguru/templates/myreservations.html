@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<p>{{user.name}}</p>
+<br />
+<ul>
+    {% for reservation in myreservations %}
+    <li>
+        Foglalás azonosító: {{reservation.id}} \t
+        Érkezés: {{reservation.reserved_start_date}} \t
+        Távozás: {{reservation.reserved_end_date}} \t
+        Éjszakák: {{reservation.nights}} \t
+        Foglalás állapota: {{reservation.status}}
+    </li>
+    <ul>
+        {% for room in reservation["rooms"] %}
+        <li>
+            Szobaszám: {{room.number}} \t
+            Ágyak száma: {{room.beds}} \t
+            Konyha: {{'✔' if room.kitchen else '✘'}} \t
+            Ár/éjszaka: {{room.price_per_night}} Ft\t
+            Teljes ár: {{room.total_price}} Ft
+        </li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for service in reservation["services"] %}
+        <li>
+            {{service.name}} \t
+            Ár/db: {{service.price}} Ft\t
+            db: {{service.quantity}} \t
+            Teljes ár: {{service.total_price}} Ft
+        </li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+</ul>
+{% endblock %}
