@@ -9,6 +9,7 @@ from Hotelguru.Forms.hotelForms import HotelForm
 from Hotelguru.Forms.searchForm import SearchForm, RoomSearchForm
 from Hotelguru.Forms.serviceForms import ServiceForm
 from Hotelguru.Forms.reviewForm import ReviewForm
+from Hotelguru.Forms.reserveForm import ReserveForm
 
 
 
@@ -147,9 +148,11 @@ def logout():
 def rooms(hid):
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
+    availableRooms = []
     if start_date and end_date:
         rooms = requests.get(request.host_url + "avalible?start_date="+start_date+"&end_date="+end_date).json()
         rooms = [room for room in rooms if room['hotel']['id'] == int(hid)]
+        availableRooms = rooms
         if not rooms:
             rooms = requests.get(request.host_url + "listrooms/" + hid).json()
             flash("No rooms available")
@@ -255,14 +258,35 @@ def rooms(hid):
             flash(f"Review add failed: {msg}")
         return redirect(url_for('main.rooms', hid=hid))
 
+    reserveForm = ReserveForm()
+    reserveForm.roomid.choices = [(room['id'], f"Szoba {room['number']}") for room in availableRooms]
+    if reserveForm.validate_on_submit() and reserveForm.submit_reservation.data:
+        if start_date and end_date:
+            response = requests.post(request.host_url + "reservation/add", json={
+                "room_ids": reserveForm.roomid.data,
+                "reserved_start_date": start_date,
+                "reserved_end_date": end_date
+            }, headers=headers)
+            if response.status_code == 200:
+                flash("Reservation added successfully")
+            else:
+                msg = response.json().get('message', response.text)
+                flash(f"Failed to add reservation: {msg}")
+        else:
+            flash(f"Need start and end dates")
+        return redirect(url_for('main.rooms', hid=hid, start_date=start_date, end_date=end_date))
+
+
 
     return render_template(
         'rooms.html', 
         rooms=rooms, user=user, roles=roles, hid=hid, 
         services=services,  reviewform=reviewform,
         roomform=roomform, roomsearch=roomsearchform, 
-        serviceform=serviceform
+        serviceform=serviceform, reserveform = reserveForm
     )
+
+
 
 @bp.route('/personalinvoice', methods=['GET', 'POST'])
 def invoice():
@@ -272,6 +296,24 @@ def invoice():
     if user:
         roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
         headers = {'Authorization': f"Bearer {user['token']}"}
-    response = requests.get(request.host_url + "/invoice/mine", headers)
+    response = requests.get(request.host_url + "/invoice/mine", headers=headers)
     invoices = response.json()
     return render_template('invoice.html', invoices=invoices, user=user)
+
+
+
+@bp.route('/reception', methods=['GET', 'POST', 'PUT'])
+def reception():
+    user = get_user_from_session()
+    roles = []
+    headers = {}
+    if user:
+        roles = requests.get(request.host_url + "userroles", headers={'Authorization': f"Bearer {user['token']}"}).json()
+        headers = {'Authorization': f"Bearer {user['token']}"}
+    response = requests.get(request.host_url + "/reservations/pending", headers=headers)
+    reception = response.json()
+    return render_template(
+        'reception.html',
+        reception=reception,
+        user=user
+    )

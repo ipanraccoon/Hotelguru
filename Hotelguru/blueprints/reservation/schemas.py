@@ -72,8 +72,6 @@ def _reservation_to_dict(reservation, detailed=False):
 
 
 class ReservationRequestSchema(Schema):
-    user_id = Integer(required=True)
-
     reserved_start_date = Date(required=True)
     reserved_end_date = Date(required=True)
 

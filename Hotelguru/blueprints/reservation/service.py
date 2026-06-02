@@ -51,7 +51,7 @@ class ReservationService:
 
             resevation = Reservation()
 
-            resevation.user_id = data["user_id"]
+            resevation.user_id = current_user_id
 
             resevation.reserved_start_date = start_date
             resevation.reserved_end_date = end_date

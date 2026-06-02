@@ -1,21 +1,16 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<p>{{user.name}}</p>
-<ul>
-    {% for invoice in invoices %}
-    <li>{{invoice.id}} {{invoice.created_at}} {{invoice.total_amount}}</li>
+    <p>{{user.name}}</p>
+    <br />
     <ul>
-        {% for item in invoice.items %}
-        <li>
-            {{item.description}} {{item.amount}}
-        </li>
+        {% for invoice in invoices %}
+            <li> Számla azonosító: {{invoice.id}} \t Létrehozás dátuma: {{invoice.created_at}} \t Teljes ár: {{invoice.total_amount}} Ft</li>
+            <ul>
+                {% for item in invoice["items"] %}
+                <li>{{item.description}} \t {{item.amount}} Ft</li>
+                {% endfor %}
+            </ul>
         {% endfor %}
-
     </ul>
-    {% endfor %}
-
-</ul>
-
-
 {% endblock %}
